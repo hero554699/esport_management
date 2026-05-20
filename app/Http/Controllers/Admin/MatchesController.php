@@ -12,14 +12,19 @@ class MatchesController extends Controller
 {
     public function index()
     {
-        $matches = Matches::with('event', 'teamA', 'teamB')->orderBy('scheduled_at', 'desc')->get();
+        // whereNull('pandascore_id') = only user/admin created matches
+        $matches = Matches::with('event', 'teamA', 'teamB')
+            ->whereNull('pandascore_id')
+            ->orderBy('scheduled_at', 'desc')
+            ->get();
         return view('admin.matches.index', compact('matches'));
     }
 
     public function create()
     {
-        $events = Event::orderBy('name')->get();
-        $teams  = Team::orderBy('name')->get();
+        // Only user-created events and teams in dropdowns
+        $events = Event::whereNull('pandascore_id')->orderBy('name')->get();
+        $teams  = Team::whereNull('pandascore_id')->orderBy('name')->get();
         return view('admin.matches.create', compact('events', 'teams'));
     }
 
@@ -29,9 +34,9 @@ class MatchesController extends Controller
             'event_id'     => 'required|exists:events,id',
             'team_a_id'    => 'required|exists:teams,id',
             'team_b_id'    => 'required|exists:teams,id|different:team_a_id',
-            'stage'        => 'required|in:group,quarterfinal,semifinal,final',
+            'stage'        => 'required|string|max:100',
             'status'       => 'required|in:upcoming,live,completed',
-            'scheduled_at' => 'required|date',
+            'scheduled_at' => 'required|date|after_or_equal:today',
         ]);
 
         Matches::create($request->only([
@@ -49,8 +54,9 @@ class MatchesController extends Controller
 
     public function edit(Matches $match)
     {
-        $events = Event::orderBy('name')->get();
-        $teams  = Team::orderBy('name')->get();
+        // Only user-created events and teams in dropdowns
+        $events = Event::whereNull('pandascore_id')->orderBy('name')->get();
+        $teams  = Team::whereNull('pandascore_id')->orderBy('name')->get();
         return view('admin.matches.edit', compact('match', 'events', 'teams'));
     }
 
@@ -60,7 +66,7 @@ class MatchesController extends Controller
             'event_id'     => 'required|exists:events,id',
             'team_a_id'    => 'required|exists:teams,id',
             'team_b_id'    => 'required|exists:teams,id|different:team_a_id',
-            'stage'        => 'required|in:group,quarterfinal,semifinal,final',
+            'stage'        => 'required|string|max:100',
             'status'       => 'required|in:upcoming,live,completed',
             'scheduled_at' => 'required|date',
         ]);

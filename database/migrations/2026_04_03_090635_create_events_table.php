@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug')->unique();
             $table->enum('status', ['upcoming', 'live', 'completed'])->default('upcoming');
+            $table->enum('approval_status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->text('rejection_reason')->nullable();
             $table->enum('type', ['local', 'national', 'international', 'world'])->default('local');
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();

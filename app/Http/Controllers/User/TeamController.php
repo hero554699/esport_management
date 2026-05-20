@@ -25,15 +25,25 @@ class TeamController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'     => 'required|string|max:255',
-            'game_id'  => 'nullable|exists:games,id',
-            'tag'      => 'nullable|string|max:10',
-            'country'  => 'nullable|string|max:60',
-            'logo_url' => 'nullable|url|max:500',
+            'name'      => 'required|string|max:255',
+            'game_id'   => 'nullable|exists:games,id',
+            'tag'       => 'nullable|string|max:10',
+            'country'   => 'nullable|string|max:60',
+            'logo_url'  => 'nullable|url|max:500',
+            'logo_file' => 'nullable|image|max:2048',
         ]);
+
+        // Handle file upload
+        if ($request->hasFile('logo_file')) {
+            $path = $request->file('logo_file')->store('logos', 'public');
+            $validated['logo_url'] = asset('storage/' . $path);
+        }
 
         $validated['slug']    = Str::slug($validated['name']) . '-' . time();
         $validated['user_id'] = Auth::id();
+
+        // Remove logo_file from validated before creating
+        unset($validated['logo_file']);
 
         Team::create($validated);
 
@@ -43,7 +53,13 @@ class TeamController extends Controller
 
     public function show(Team $team)
     {
-        return redirect()->route('dashboard');
+        if ($team->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $team->load(['players', 'game']);
+
+        return view('user.teams.show', compact('team'));
     }
 
     public function edit(Team $team)

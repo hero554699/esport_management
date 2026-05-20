@@ -14,15 +14,24 @@ class DashboardController extends Controller
 {
     public function index()
     {
+
         $stats = [
             'games'         => Game::count(),
             'organizations' => Organization::count(),
-            'events'        => Event::count(),
-            'teams'         => Team::count(),
-            'players'       => Player::count(),
+            'events'        => Event::whereNull('pandascore_id')->count(),
+            'teams'         => Team::whereNull('pandascore_id')->count(),
+            'players'       => Player::whereNull('pandascore_id')->count(),
             'matches'       => Matches::count(),
         ];
 
-        return view('admin.dashboard', compact('stats'));
+
+        $pendingEvents = Event::whereNull('pandascore_id')
+            ->where('approval_status', 'pending')
+            ->whereNotNull('user_id')
+            ->with('game', 'user')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('admin.dashboard', compact('stats', 'pendingEvents'));
     }
 }

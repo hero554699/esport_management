@@ -80,8 +80,11 @@
 
         <div>
             <label class="block text-sm text-gray-400 mb-1">Scheduled Date & Time</label>
+            {{-- min set to now — blocks past date selection --}}
             <input type="datetime-local" name="scheduled_at" value="{{ old('scheduled_at') }}"
+                min="{{ now()->format('Y-m-d\TH:i') }}"
                 class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-orange-500">
+            <p class="text-xs text-gray-600 mt-1">Cannot schedule in the past.</p>
         </div>
 
         <div class="pt-2">

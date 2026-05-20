@@ -13,8 +13,18 @@ class EventController extends Controller
 {
     public function index()
     {
-        $events = Event::with('game')->orderBy('start_date', 'desc')->get();
-        return view('admin.events.index', compact('events'));
+        // whereNull('pandascore_id') = only user/admin created events, hides PandaScore tournaments
+        $events = Event::with('game', 'user')
+            ->whereNull('pandascore_id')
+            ->orderByRaw("FIELD(approval_status, 'pending', 'approved', 'rejected')")
+            ->orderBy('start_date', 'desc')
+            ->get();
+
+        $pendingCount = $events->where('approval_status', 'pending')
+            ->whereNotNull('user_id')
+            ->count();
+
+        return view('admin.events.index', compact('events', 'pendingCount'));
     }
 
     public function create()
@@ -36,15 +46,16 @@ class EventController extends Controller
         ]);
 
         Event::create([
-            'name'       => $request->name,
-            'slug'       => Str::slug($request->name),
-            'game_id'    => $request->game_id,
-            'user_id'    => auth()->id(),
-            'status'     => $request->status,
-            'start_date' => $request->start_date,
-            'end_date'   => $request->end_date,
-            'prize_pool' => $request->prize_pool,
-            'banner_url' => $request->banner_url,
+            'name'            => $request->name,
+            'slug'            => Str::slug($request->name) . '-' . time(),
+            'game_id'         => $request->game_id,
+            'user_id'         => auth()->id(),
+            'status'          => $request->status,
+            'approval_status' => 'approved', // Admin created = auto approved
+            'start_date'      => $request->start_date,
+            'end_date'        => $request->end_date,
+            'prize_pool'      => $request->prize_pool,
+            'banner_url'      => $request->banner_url,
         ]);
 
         return redirect()->route('admin.events.index')
@@ -71,7 +82,7 @@ class EventController extends Controller
 
         $event->update([
             'name'       => $request->name,
-            'slug'       => Str::slug($request->name),
+            'slug'       => Str::slug($request->name) . '-' . time(),
             'game_id'    => $request->game_id,
             'status'     => $request->status,
             'start_date' => $request->start_date,
@@ -89,5 +100,31 @@ class EventController extends Controller
         $event->delete();
         return redirect()->route('admin.events.index')
             ->with('success', 'Event deleted!');
+    }
+
+    public function approve(Event $event)
+    {
+        $event->update([
+            'approval_status'  => 'approved',
+            'rejection_reason' => null,
+        ]);
+
+        return redirect()->route('admin.events.index')
+            ->with('success', "Tournament '{$event->name}' approved!");
+    }
+
+    public function reject(Request $request, Event $event)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:500',
+        ]);
+
+        $event->update([
+            'approval_status'  => 'rejected',
+            'rejection_reason' => $request->rejection_reason,
+        ]);
+
+        return redirect()->route('admin.events.index')
+            ->with('success', "Tournament '{$event->name}' rejected.");
     }
 }

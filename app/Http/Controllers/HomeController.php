@@ -13,8 +13,19 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $liveEvents     = Event::where('status', 'live')->with('game')->take(4)->get();
-        $upcomingEvents = Event::where('status', 'upcoming')->with('game')->orderBy('start_date')->take(4)->get();
+        // Only approved events show on public side
+        $liveEvents = Event::where('status', 'live')
+            ->where('approval_status', 'approved')
+            ->with('game')
+            ->take(4)
+            ->get();
+
+        $upcomingEvents = Event::where('status', 'upcoming')
+            ->where('approval_status', 'approved')
+            ->with('game')
+            ->orderBy('start_date')
+            ->take(4)
+            ->get();
 
         // Popular games — ordered by most events
         $games = Game::withCount(['events', 'teams'])
@@ -42,7 +53,7 @@ class HomeController extends Controller
             ->get();
 
         $totalTeams   = Team::count();
-        $totalEvents  = Event::count();
+        $totalEvents  = Event::where('approval_status', 'approved')->count();
         $totalPlayers = Player::count();
         $totalOrgs    = Organization::count();
 

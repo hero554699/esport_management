@@ -12,8 +12,18 @@ class TeamController extends Controller
 {
     public function index()
     {
-        $teams = Team::with('game', 'organization')->orderBy('name')->get();
+        $teams = Team::with('game', 'organization')
+            ->whereNull('pandascore_id')
+            ->withCount('players')
+            ->orderBy('name')->get();
         return view('admin.teams.index', compact('teams'));
+    }
+
+    
+    public function show(Team $team)
+    {
+        $team->load(['players', 'game']);
+        return view('admin.teams.show', compact('team'));
     }
 
     public function create()

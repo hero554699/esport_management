@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,100 +8,331 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        :root { --orange: #e8460a; --bg: #07070f; --card: #111120; --border: rgba(255,255,255,0.07); --border-hi: rgba(232,70,10,0.25); --t1: #e4e4f4; --t2: #8a8aa8; --t3: #4a4a68; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--t1); min-height: 100vh; }
-        body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(232,70,10,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232,70,10,0.025) 1px, transparent 1px); background-size: 48px 48px; pointer-events: none; z-index: 0; }
-        nav { position: sticky; top: 0; z-index: 100; background: rgba(7,7,15,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 32px; height: 60px; gap: 24px; }
-        .nav-logo { font-family: 'Rajdhani', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #fff; text-decoration: none; }
-        .nav-logo span { color: var(--orange); }
-        .container { max-width: 720px; margin: 0 auto; padding: 40px 32px; position: relative; z-index: 1; }
-        .page-header { margin-bottom: 32px; }
-        .page-header h1 { font-family: 'Rajdhani', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: 1px; color: var(--t1); }
-        .page-header p { font-size: 14px; color: var(--t2); margin-top: 4px; }
-        .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 32px; }
-        .form-group { margin-bottom: 20px; }
-        .form-label { display: block; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--t2); margin-bottom: 8px; }
-        .form-input, .form-select { width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px; color: var(--t1); font-family: 'Inter', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; }
-        .form-input:focus, .form-select:focus { border-color: rgba(232,70,10,0.4); }
-        .form-input::placeholder { color: var(--t3); }
-        .form-select option { background: #111120; }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .alert-error { background: rgba(232,70,10,0.08); border: 1px solid rgba(232,70,10,0.25); color: #ff7a50; padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 20px; }
-        .btn-primary { display: inline-flex; align-items: center; gap: 6px; padding: 11px 24px; background: var(--orange); border: none; border-radius: 8px; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity 0.15s; text-decoration: none; }
-        .btn-primary:hover { opacity: 0.85; }
-        .btn-ghost { display: inline-flex; align-items: center; gap: 6px; padding: 11px 24px; background: transparent; border: 1px solid var(--border); border-radius: 8px; color: var(--t2); font-size: 14px; cursor: pointer; transition: all 0.15s; text-decoration: none; }
-        .btn-ghost:hover { border-color: var(--border-hi); color: var(--t1); }
+        :root {
+            --orange: #e8460a;
+            --bg: #07070f;
+            --card: #111120;
+            --border: rgba(255, 255, 255, 0.07);
+            --border-hi: rgba(232, 70, 10, 0.25);
+            --t1: #e4e4f4;
+            --t2: #8a8aa8;
+            --t3: #4a4a68;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--t1);
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(rgba(232, 70, 10, 0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232, 70, 10, 0.025) 1px, transparent 1px);
+            background-size: 48px 48px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(7, 7, 15, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 32px;
+            height: 60px;
+            gap: 24px;
+        }
+
+        .nav-logo {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .nav-logo span {
+            color: var(--orange);
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 40px 32px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-header h1 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--t1);
+        }
+
+        .page-header p {
+            font-size: 14px;
+            color: var(--t2);
+            margin-top: 4px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--t2);
+            margin-bottom: 8px;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 11px 14px;
+            color: var(--t1);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            border-color: rgba(232, 70, 10, 0.4);
+        }
+
+        .form-input::placeholder {
+            color: var(--t3);
+        }
+
+        .form-select option {
+            background: #111120;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .alert-error {
+            background: rgba(232, 70, 10, 0.08);
+            border: 1px solid rgba(232, 70, 10, 0.25);
+            color: #ff7a50;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 11px 24px;
+            background: var(--orange);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.15s;
+            text-decoration: none;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.85;
+        }
+
+        .btn-ghost {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 11px 24px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--t2);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-decoration: none;
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--border-hi);
+            color: var(--t1);
+        }
     </style>
 </head>
+
 <body>
 
-<nav>
-    <a href="{{ route('home') }}" class="nav-logo">Esports<span>Track</span></a>
-</nav>
+    <nav>
+        <a href="{{ route('home') }}" class="nav-logo">Esports<span>Track</span></a>
+    </nav>
 
-<div class="container">
-    <div class="page-header">
-        <h1>Create Team</h1>
-        <p>Build your esports team</p>
-    </div>
+    <div class="container">
+        <div class="page-header">
+            <h1>Create Team</h1>
+            <p>Build your esports team</p>
+        </div>
 
-    @if($errors->any())
+        @if($errors->any())
         <div class="alert-error">{{ $errors->first() }}</div>
-    @endif
+        @endif
 
-    <div class="card">
-        <form method="POST" action="{{ route('user.teams.store') }}">
-            @csrf
+        <div class="card">
+            <form method="POST" action="{{ route('user.teams.store') }}">
+                @csrf
 
-            <div class="form-group">
-                <label class="form-label">Team Name *</label>
-                <input type="text" name="name" class="form-input"
-                       value="{{ old('name') }}"
-                       placeholder="e.g. Team Bayani" required>
-            </div>
-
-            <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label">Tag / Abbreviation</label>
-                    <input type="text" name="tag" class="form-input"
-                           value="{{ old('tag') }}"
-                           placeholder="e.g. TBY" maxlength="10">
+                    <label class="form-label">Team Name *</label>
+                    <input type="text" name="name" class="form-input"
+                        value="{{ old('name') }}"
+                        placeholder="e.g. Team Bayani" required>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Country</label>
-                    <input type="text" name="country" class="form-input"
-                           value="{{ old('country') }}"
-                           placeholder="e.g. Philippines">
-                </div>
-            </div>
 
-            <div class="form-group">
-                <label class="form-label">Game</label>
-                <select name="game_id" class="form-select">
-                    <option value="">Select a game...</option>
-                    @foreach($games as $game)
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Tag / Abbreviation</label>
+                        <input type="text" name="tag" class="form-input"
+                            value="{{ old('tag') }}"
+                            placeholder="e.g. TBY" maxlength="10">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Country</label>
+                        <select name="country"
+                            class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm
+           focus:outline-none focus:border-orange-500 transition">
+                            <option value="">Select country...</option>
+                            @foreach(config('countries') as $code => $name)
+                            <option value="{{ $name }}" {{ old('country') == $name ? 'selected' : '' }}>
+                                {{ $name }}
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Game</label>
+                    <select name="game_id" class="form-select">
+                        <option value="">Select a game...</option>
+                        @foreach($games as $game)
                         <option value="{{ $game->id }}" {{ old('game_id') == $game->id ? 'selected' : '' }}>
                             {{ $game->name }}
                         </option>
-                    @endforeach
-                </select>
-            </div>
+                        @endforeach
+                    </select>
+                </div>
 
-            <div class="form-group">
-                <label class="form-label">Logo URL</label>
-                <input type="url" name="logo_url" class="form-input"
-                       value="{{ old('logo_url') }}"
-                       placeholder="https://example.com/logo.png">
-            </div>
+                <div class="mb-6">
+                    <label class="block text-xs text-gray-400 uppercase tracking-wide mb-2">Team Logo</label>
 
-            <div style="display:flex; gap:12px; margin-top:8px;">
-                <button type="submit" class="btn-primary">Create Team</button>
-                <a href="{{ route('dashboard') }}" class="btn-ghost">Cancel</a>
-            </div>
-        </form>
+                    {{-- Toggle --}}
+                    <div class="flex gap-2 mb-3">
+                        <button type="button" id="btn-url"
+                            onclick="switchLogoMode('url')"
+                            class="px-3 py-1.5 text-xs rounded-lg bg-orange-500 text-white transition">
+                            Image URL
+                        </button>
+                        <button type="button" id="btn-file"
+                            onclick="switchLogoMode('file')"
+                            class="px-3 py-1.5 text-xs rounded-lg bg-gray-700 text-gray-400 transition">
+                            Upload File
+                        </button>
+                    </div>
+
+                    {{-- URL input --}}
+                    <div id="logo-url-input">
+                        <input type="url" name="logo_url"
+                            value="{{ old('logo_url') }}"
+                            placeholder="https://example.com/logo.png"
+                            class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm
+                      focus:outline-none focus:border-orange-500 placeholder-gray-600 transition">
+                        <p class="text-xs text-gray-600 mt-1">Paste a direct image link</p>
+                    </div>
+
+                    {{-- File upload --}}
+                    <div id="logo-file-input" class="hidden">
+                        <input type="file" name="logo_file" accept="image/*"
+                            class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm
+                      focus:outline-none focus:border-orange-500 transition file:mr-3 file:py-1
+                      file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-medium
+                      file:bg-orange-500 file:text-white hover:file:bg-orange-600">
+                        <p class="text-xs text-gray-600 mt-1">Upload JPG, PNG or GIF (max 2MB)</p>
+                    </div>
+                </div>
+
+                <script>
+                    function switchLogoMode(mode) {
+                        const urlInput = document.getElementById('logo-url-input');
+                        const fileInput = document.getElementById('logo-file-input');
+                        const btnUrl = document.getElementById('btn-url');
+                        const btnFile = document.getElementById('btn-file');
+
+                        if (mode === 'url') {
+                            urlInput.classList.remove('hidden');
+                            fileInput.classList.add('hidden');
+                            btnUrl.classList.replace('bg-gray-700', 'bg-orange-500');
+                            btnUrl.classList.replace('text-gray-400', 'text-white');
+                            btnFile.classList.replace('bg-orange-500', 'bg-gray-700');
+                            btnFile.classList.replace('text-white', 'text-gray-400');
+                        } else {
+                            fileInput.classList.remove('hidden');
+                            urlInput.classList.add('hidden');
+                            btnFile.classList.replace('bg-gray-700', 'bg-orange-500');
+                            btnFile.classList.replace('text-gray-400', 'text-white');
+                            btnUrl.classList.replace('bg-orange-500', 'bg-gray-700');
+                            btnUrl.classList.replace('text-white', 'text-gray-400');
+                        }
+                    }
+                </script>
+
+                <div style="display:flex; gap:12px; margin-top:8px;">
+                    <button type="submit" class="btn-primary">Create Team</button>
+                    <a href="{{ route('dashboard') }}" class="btn-ghost">Cancel</a>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
 </body>
+
 </html>

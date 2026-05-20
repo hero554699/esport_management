@@ -11,24 +11,28 @@ class PlayerController extends Controller
 {
     public function index()
     {
-        $players = Player::with('team')->orderBy('username')->get();
+        // whereNull('pandascore_id') = only user/admin created players, not PandaScore
+        $players = Player::with('team')
+            ->whereNull('pandascore_id')
+            ->orderBy('username')->get();
         return view('admin.players.index', compact('players'));
     }
 
     public function create()
     {
-        $teams = Team::orderBy('name')->get();
+        // Only show user/admin created teams in dropdown, not PandaScore teams
+        $teams = Team::whereNull('pandascore_id')->orderBy('name')->get();
         return view('admin.players.create', compact('teams'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'username'  => 'required|string|max:255',
-            'real_name' => 'nullable|string|max:255',
-            'team_id'   => 'required|exists:teams,id',
-            'country'   => 'nullable|string|max:60',
-            'role'      => 'nullable|string|max:100',
+            'username'   => 'required|string|max:255',
+            'real_name'  => 'nullable|string|max:255',
+            'team_id'    => 'required|exists:teams,id',
+            'country'    => 'nullable|string|max:60',
+            'role'       => 'nullable|string|max:100',
             'avatar_url' => 'nullable|url',
         ]);
 
@@ -47,18 +51,19 @@ class PlayerController extends Controller
 
     public function edit(Player $player)
     {
-        $teams = Team::orderBy('name')->get();
+        // Only show user/admin created teams in dropdown, not PandaScore teams
+        $teams = Team::whereNull('pandascore_id')->orderBy('name')->get();
         return view('admin.players.edit', compact('player', 'teams'));
     }
 
     public function update(Request $request, Player $player)
     {
         $request->validate([
-            'username'  => 'required|string|max:255',
-            'real_name' => 'nullable|string|max:255',
-            'team_id'   => 'required|exists:teams,id',
-            'country'   => 'nullable|string|max:60',
-            'role'      => 'nullable|string|max:100',
+            'username'   => 'required|string|max:255',
+            'real_name'  => 'nullable|string|max:255',
+            'team_id'    => 'required|exists:teams,id',
+            'country'    => 'nullable|string|max:60',
+            'role'       => 'nullable|string|max:100',
             'avatar_url' => 'nullable|url',
         ]);
 

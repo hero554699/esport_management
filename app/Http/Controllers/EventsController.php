@@ -15,6 +15,7 @@ class EventsController extends Controller
         $search = request('search');
 
         $events = Event::with('game')
+            ->where('approval_status', 'approved') 
             ->when($status, fn($q) => $q->where('status', $status))
             ->when($gameId, fn($q) => $q->where('game_id', $gameId))
             ->when($type, fn($q) => $q->where('type', $type))

@@ -30,38 +30,38 @@
     </form>
 
     {{-- Filters --}}
-    <div class="flex flex-wrap gap-3 mb-8">
+    <div class="flex items-center gap-3 mb-8 flex-wrap">
 
-        {{-- Status filters --}}
-        <a href="{{ route('matches.index', array_filter(['game' => $gameId, 'search' => $search])) }}"
-            class="px-4 py-1.5 rounded-full text-sm font-medium transition
-                {{ !$status ? 'bg-orange-500 text-white' : 'bg-gray-800 text-gray-400 hover:text-white' }}">
+        {{-- Status filters — all same height and style --}}
+        <a href="{{ route('matches.index', array_filter(['game' => $gameId ?? '', 'search' => $search ?? ''])) }}"
+            class="px-4 py-2 rounded-lg text-sm font-medium transition
+                {{ !$status ? 'bg-orange-500 text-white' : 'bg-gray-900 border border-gray-700 text-gray-400 hover:border-orange-500 hover:text-white' }}">
             All
         </a>
-        <a href="{{ route('matches.index', array_filter(['status' => 'live', 'game' => $gameId, 'search' => $search])) }}"
-            class="px-4 py-1.5 rounded-full text-sm font-medium transition flex items-center gap-1.5
-                {{ $status === 'live' ? 'bg-orange-500 text-white' : 'bg-gray-800 text-gray-400 hover:text-white' }}">
+        <a href="{{ route('matches.index', array_filter(['status' => 'live', 'game' => $gameId ?? '', 'search' => $search ?? ''])) }}"
+            class="px-4 py-2 rounded-lg text-sm font-medium transition inline-flex items-center gap-2
+                {{ $status === 'live' ? 'bg-orange-500 text-white' : 'bg-gray-900 border border-gray-700 text-gray-400 hover:border-orange-500 hover:text-white' }}">
             <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
             Live
         </a>
-        <a href="{{ route('matches.index', array_filter(['status' => 'upcoming', 'game' => $gameId, 'search' => $search])) }}"
-            class="px-4 py-1.5 rounded-full text-sm font-medium transition
-                {{ $status === 'upcoming' ? 'bg-orange-500 text-white' : 'bg-gray-800 text-gray-400 hover:text-white' }}">
+        <a href="{{ route('matches.index', array_filter(['status' => 'upcoming', 'game' => $gameId ?? '', 'search' => $search ?? ''])) }}"
+            class="px-4 py-2 rounded-lg text-sm font-medium transition
+                {{ $status === 'upcoming' ? 'bg-orange-500 text-white' : 'bg-gray-900 border border-gray-700 text-gray-400 hover:border-orange-500 hover:text-white' }}">
             Upcoming
         </a>
-        <a href="{{ route('matches.index', array_filter(['status' => 'completed', 'game' => $gameId, 'search' => $search])) }}"
-            class="px-4 py-1.5 rounded-full text-sm font-medium transition
-                {{ $status === 'completed' ? 'bg-orange-500 text-white' : 'bg-gray-800 text-gray-400 hover:text-white' }}">
+        <a href="{{ route('matches.index', array_filter(['status' => 'completed', 'game' => $gameId ?? '', 'search' => $search ?? ''])) }}"
+            class="px-4 py-2 rounded-lg text-sm font-medium transition
+                {{ $status === 'completed' ? 'bg-orange-500 text-white' : 'bg-gray-900 border border-gray-700 text-gray-400 hover:border-orange-500 hover:text-white' }}">
             Completed
         </a>
 
         {{-- Game filter --}}
         <select onchange="window.location='{{ route('matches.index') }}?game='+this.value+'{{ $status ? '&status='.$status : '' }}{{ $search ? '&search='.$search : '' }}'"
             class="bg-gray-900 border border-gray-700 text-gray-400 text-sm rounded-lg px-3 py-2
-                   focus:outline-none focus:border-orange-500 ml-auto">
+                focus:outline-none focus:border-orange-500 ml-auto">
             <option value="">All Games</option>
             @foreach($games as $game)
-                <option value="{{ $game->id }}" {{ $gameId == $game->id ? 'selected' : '' }}>
+                <option value="{{ $game->id }}" {{ ($gameId ?? '') == $game->id ? 'selected' : '' }}>
                     {{ $game->name }}
                 </option>
             @endforeach
@@ -77,10 +77,10 @@
     <div class="flex flex-col gap-3">
         @forelse($matches as $match)
             <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-orange-500/50 transition">
-                <div class="flex items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
 
-                    {{-- Status + Event --}}
-                    <div class="flex flex-col gap-1 min-w-[160px]">
+                    {{-- Left: Status + Event info --}}
+                    <div class="flex flex-col gap-1 w-44 flex-shrink-0">
                         @if($match->status === 'live')
                             <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-red-400">
                                 <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
@@ -101,67 +101,72 @@
                         @endif
                     </div>
 
-                    {{-- Teams + Score --}}
-                    <div class="flex items-center gap-4 flex-1 justify-center">
+                    {{-- Center: Teams + Score perfectly centered --}}
+                    <div class="flex-1 flex items-center justify-center gap-0">
 
-                        {{-- Team A --}}
-                        <div class="flex items-center gap-2 justify-end flex-1">
-                            <span class="font-semibold text-white text-sm text-right">
+                        {{-- Team A — right aligned --}}
+                        <div class="flex items-center gap-3 flex-1 justify-end">
+                            <span class="font-semibold text-sm text-right leading-tight
+                                {{ $match->result?->winner_team_id === $match->team_a_id ? 'text-orange-500' : 'text-white' }}">
                                 {{ $match->teamA?->name ?? 'TBD' }}
                             </span>
                             @if($match->teamA?->logo_url)
                                 <img src="{{ $match->teamA->logo_url }}"
-                                     class="w-8 h-8 rounded object-cover flex-shrink-0">
+                                    class="w-9 h-9 rounded-lg object-cover flex-shrink-0">
                             @else
-                                <div class="w-8 h-8 rounded bg-gray-800 border border-gray-700
+                                <div class="w-9 h-9 rounded-lg bg-gray-800 border border-gray-700
                                             flex items-center justify-center text-xs font-bold text-orange-500 flex-shrink-0">
                                     {{ strtoupper(substr($match->teamA?->name ?? 'A', 0, 2)) }}
                                 </div>
                             @endif
                         </div>
 
-                        {{-- Score / VS --}}
-                        <div class="flex items-center gap-1 text-center min-w-[60px] justify-center">
+                        {{-- Score / VS — fixed width perfectly centered --}}
+                        <div class="w-24 flex items-center justify-center flex-shrink-0">
                             @if($match->status === 'completed' && $match->result)
-                                <span class="text-lg font-bold
-                                    {{ $match->result->winner_team_id === $match->team_a_id ? 'text-orange-500' : 'text-white' }}">
-                                    {{ $match->result->score_a ?? 0 }}
-                                </span>
-                                <span class="text-gray-600 text-sm">:</span>
-                                <span class="text-lg font-bold
-                                    {{ $match->result->winner_team_id === $match->team_b_id ? 'text-orange-500' : 'text-white' }}">
-                                    {{ $match->result->score_b ?? 0 }}
-                                </span>
+                                <div class="flex items-center gap-1">
+                                    <span class="text-xl font-bold w-8 text-center
+                                        {{ $match->result->winner_team_id === $match->team_a_id ? 'text-orange-500' : 'text-gray-400' }}">
+                                        {{ $match->result->score_a ?? 0 }}
+                                    </span>
+                                    <span class="text-gray-600 text-sm">:</span>
+                                    <span class="text-xl font-bold w-8 text-center
+                                        {{ $match->result->winner_team_id === $match->team_b_id ? 'text-orange-500' : 'text-gray-400' }}">
+                                        {{ $match->result->score_b ?? 0 }}
+                                    </span>
+                                </div>
                             @else
                                 <span class="text-xs font-bold text-gray-500 border border-gray-700
-                                             rounded px-2 py-0.5">VS</span>
+                                            rounded-lg px-3 py-1.5">VS</span>
                             @endif
                         </div>
 
-                        {{-- Team B --}}
-                        <div class="flex items-center gap-2 flex-1">
+                        {{-- Team B — left aligned --}}
+                        <div class="flex items-center gap-3 flex-1 justify-start">
                             @if($match->teamB?->logo_url)
                                 <img src="{{ $match->teamB->logo_url }}"
-                                     class="w-8 h-8 rounded object-cover flex-shrink-0">
+                                    class="w-9 h-9 rounded-lg object-cover flex-shrink-0">
                             @else
-                                <div class="w-8 h-8 rounded bg-gray-800 border border-gray-700
+                                <div class="w-9 h-9 rounded-lg bg-gray-800 border border-gray-700
                                             flex items-center justify-center text-xs font-bold text-orange-500 flex-shrink-0">
                                     {{ strtoupper(substr($match->teamB?->name ?? 'B', 0, 2)) }}
                                 </div>
                             @endif
-                            <span class="font-semibold text-white text-sm">
+                            <span class="font-semibold text-sm leading-tight
+                                {{ $match->result?->winner_team_id === $match->team_b_id ? 'text-orange-500' : 'text-white' }}">
                                 {{ $match->teamB?->name ?? 'TBD' }}
                             </span>
                         </div>
+
                     </div>
 
-                    {{-- Game --}}
-                    <div class="text-right min-w-[100px]">
+                    {{-- Right: Game + Stage --}}
+                    <div class="text-right w-36 flex-shrink-0">
                         @if($match->event?->game)
                             <span class="text-xs text-gray-500">{{ $match->event->game->name }}</span>
                         @endif
                         @if($match->stage)
-                            <div class="text-xs text-gray-600 mt-0.5">{{ $match->stage }}</div>
+                            <div class="text-xs text-gray-600 mt-0.5 truncate">{{ $match->stage }}</div>
                         @endif
                     </div>
 

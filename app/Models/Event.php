@@ -17,7 +17,9 @@ class Event extends Model
         'start_date',
         'end_date',
         'prize_pool',
-        'banner_url'
+        'banner_url',
+        'approval_status',
+        'rejection_reason',
     ];
 
     public function game()

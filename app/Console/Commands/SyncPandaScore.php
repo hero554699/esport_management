@@ -9,6 +9,7 @@ use App\Models\Team;
 use App\Models\Player;
 use App\Models\Event;
 use App\Models\Matches;
+use App\Models\Result;
 use Illuminate\Support\Str;
 
 class SyncPandaScore extends Command
@@ -260,21 +261,57 @@ class SyncPandaScore extends Command
 
             if (!$teamA || !$teamB || !$event) continue;
 
-            Matches::updateOrCreate(
+            $status = match($m['status'] ?? 'not_started') {
+                'running'  => 'live',
+                'finished' => 'completed',
+                default    => 'upcoming',
+            };
+
+            $match = Matches::updateOrCreate(
                 ['pandascore_id' => (string) $m['id']],
                 [
                     'event_id'     => $event->id,
                     'team_a_id'    => $teamA->id,
                     'team_b_id'    => $teamB->id,
                     'scheduled_at' => $m['scheduled_at'] ?? null,
-                    'status'       => match($m['status'] ?? 'not_started') {
-                        'running'  => 'live',
-                        'finished' => 'completed',
-                        default    => 'upcoming',
-                    },
-                    'stage' => $m['name'] ?? null,
+                    'status'       => $status,
+                    'stage'        => $m['name'] ?? null,
                 ]
             );
+
+            // Save result if match is completed
+            if ($status === 'completed') {
+                $winnerId = null;
+                if (isset($m['winner']['id'])) {
+                    $winnerTeam = Team::where('pandascore_id', (string) $m['winner']['id'])->first();
+                    $winnerId   = $winnerTeam?->id;
+                }
+
+                $scoreA = null;
+                $scoreB = null;
+                if (isset($m['results']) && count($m['results']) >= 2) {
+                    foreach ($m['results'] as $result) {
+                        if (isset($result['team_id'])) {
+                            $resultTeam = Team::where('pandascore_id', (string) $result['team_id'])->first();
+                            if ($resultTeam?->id === $teamA->id) {
+                                $scoreA = $result['score'] ?? null;
+                            } elseif ($resultTeam?->id === $teamB->id) {
+                                $scoreB = $result['score'] ?? null;
+                            }
+                        }
+                    }
+                }
+
+                Result::updateOrCreate(
+                    ['match_id' => $match->id],
+                    [
+                        'winner_team_id' => $winnerId,
+                        'score_a'        => $scoreA,
+                        'score_b'        => $scoreB,
+                    ]
+                );
+            }
+
             $count++;
         }
 

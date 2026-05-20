@@ -102,6 +102,11 @@
                         class="hidden md:block text-sm bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 rounded-lg transition font-medium">
                         Admin Panel
                     </a>
+                    @else
+                    <a href="{{ route('dashboard') }}"
+                        class="hidden md:block text-sm bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 rounded-lg transition font-medium">
+                        Dashboard
+                    </a>
                     @endif
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf

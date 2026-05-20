@@ -80,6 +80,7 @@
             <label class="block text-sm text-gray-400 mb-1">Scheduled Date & Time</label>
             <input type="datetime-local" name="scheduled_at"
                 value="{{ old('scheduled_at', \Carbon\Carbon::parse($match->scheduled_at)->format('Y-m-d\TH:i')) }}"
+                min="{{ now()->format('Y-m-d\TH:i') }}"
                 class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-orange-500">
         </div>
 
