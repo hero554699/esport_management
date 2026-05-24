@@ -3,90 +3,69 @@
 @section('content')
 
 <div class="max-w-3xl mx-auto px-4 py-10">
-    <div class="mb-8">
-        <a href="{{ route('dashboard') }}"
-           class="text-gray-500 hover:text-orange-500 text-sm transition">← Back to Dashboard</a>
-        <h1 class="text-2xl font-bold mt-3">Edit Tournament</h1>
-        <p class="text-gray-400 text-sm mt-1">Update {{ $event->name }}</p>
-    </div>
+    <a href="{{ route('user.events.index') }}" class="text-gray-500 hover:text-orange-500 text-sm transition">← Back to Tournaments</a>
 
     @if($errors->any())
-        <div class="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl mb-6 text-sm">
-            {{ $errors->first() }}
-        </div>
+    <div class="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl my-4 text-sm">{{ $errors->first() }}</div>
     @endif
 
-    <div class="bg-gray-900 border border-gray-800 rounded-xl p-6">
-        <form method="POST" action="{{ route('user.events.update', $event) }}">
+    <div class="bg-gray-900 border border-gray-800 rounded-xl p-6 mt-4">
+        <form method="POST" action="{{ route('user.events.update', $event) }}" class="space-y-4">
             @csrf
             @method('PUT')
 
-            <div class="mb-5">
-                <label class="block text-xs text-gray-400 uppercase tracking-wide mb-2">
-                    Tournament Name *
-                </label>
-                <input type="text" name="name" required
-                       value="{{ old('name', $event->name) }}"
-                       class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm
-                              focus:outline-none focus:border-orange-500 transition">
+            <div>
+                <label class="block text-sm text-gray-400 mb-1">Tournament Name *</label>
+                <input type="text" name="name" required value="{{ old('name', $event->name) }}" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm">
             </div>
 
-            <div class="mb-5">
-                <label class="block text-xs text-gray-400 uppercase tracking-wide mb-2">Game *</label>
-                <select name="game_id" required
-                    class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm
-                           focus:outline-none focus:border-orange-500 transition">
-                    <option value="">Select a game...</option>
+            <div>
+                <label class="block text-sm text-gray-400 mb-1">Game *</label>
+                <select name="game_id" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm">
                     @foreach($games as $game)
-                        <option value="{{ $game->id }}"
-                            {{ old('game_id', $event->game_id) == $game->id ? 'selected' : '' }}>
-                            {{ $game->name }}
-                        </option>
+                    <option value="{{ $game->id }}" {{ old('game_id', $event->game_id) == $game->id ? 'selected' : '' }}>{{ $game->name }}</option>
                     @endforeach
                 </select>
             </div>
 
-            <div class="grid grid-cols-2 gap-4 mb-5">
+            <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs text-gray-400 uppercase tracking-wide mb-2">
-                        Start Date *
-                    </label>
-                    <input type="date" name="start_date" required
-                           id="start-date"
-                           value="{{ old('start_date', $event->start_date) }}"
-                           class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm
-                                  focus:outline-none focus:border-orange-500 transition">
+                    <label class="block text-sm text-gray-400 mb-1">Team A *</label>
+                    <select name="team_a_id" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm">
+                        @foreach($teams as $team)
+                        <option value="{{ $team->id }}" {{ old('team_a_id', $event->team_a_id) == $team->id ? 'selected' : '' }}>{{ $team->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div>
-                    <label class="block text-xs text-gray-400 uppercase tracking-wide mb-2">
-                        End Date *
-                    </label>
-                    <input type="date" name="end_date" required
-                           id="end-date"
-                           value="{{ old('end_date', $event->end_date) }}"
-                           class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm
-                                  focus:outline-none focus:border-orange-500 transition">
+                    <label class="block text-sm text-gray-400 mb-1">Team B *</label>
+                    <select name="team_b_id" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm">
+                        @foreach($teams as $team)
+                        <option value="{{ $team->id }}" {{ old('team_b_id', $event->team_b_id) == $team->id ? 'selected' : '' }}>{{ $team->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4 mb-5">
+            <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs text-gray-400 uppercase tracking-wide mb-2">
-                        Prize Pool
-                    </label>
-                    <input type="text" name="prize_pool"
-                           value="{{ old('prize_pool', $event->prize_pool) }}"
-                           placeholder="e.g. $500 or ₱10,000"
-                           class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm
-                                  focus:outline-none focus:border-orange-500 placeholder-gray-600 transition">
+                    <label class="block text-sm text-gray-400 mb-1">Start Date *</label>
+                    <input type="datetime-local" name="start_date" required value="{{ old('start_date', optional($event->start_date)->format('Y-m-d\TH:i')) }}" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm">
                 </div>
                 <div>
-                    <label class="block text-xs text-gray-400 uppercase tracking-wide mb-2">
-                        Tournament Type
-                    </label>
-                    <select name="type"
-                        class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm
-                               focus:outline-none focus:border-orange-500 transition">
+                    <label class="block text-sm text-gray-400 mb-1">End Date *</label>
+                    <input type="datetime-local" name="end_date" required value="{{ old('end_date', optional($event->end_date)->format('Y-m-d\TH:i')) }}" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm text-gray-400 mb-1">Prize Pool</label>
+                    <input type="text" name="prize_pool" value="{{ old('prize_pool', $event->prize_pool) }}" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400 mb-1">Tournament Type</label>
+                    <select name="type" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm">
                         <option value="local" {{ old('type', $event->type) == 'local' ? 'selected' : '' }}>Local</option>
                         <option value="national" {{ old('type', $event->type) == 'national' ? 'selected' : '' }}>National</option>
                         <option value="international" {{ old('type', $event->type) == 'international' ? 'selected' : '' }}>International</option>
@@ -95,40 +74,8 @@
                 </div>
             </div>
 
-            {{-- Current status info --}}
-            <div class="bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3 mb-6">
-                <p class="text-xs text-gray-500">
-                    Current status:
-                    <span class="font-semibold
-                        {{ $event->status === 'live' ? 'text-red-400' :
-                           ($event->status === 'upcoming' ? 'text-blue-400' : 'text-gray-400') }}">
-                        {{ ucfirst($event->status) }}
-                    </span>
-                    — Status is managed automatically based on dates and team acceptances.
-                </p>
-            </div>
-
-            <div class="flex gap-3">
-                <button type="submit"
-                    class="bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-semibold
-                           px-6 py-2.5 rounded-xl transition text-sm">
-                    Update Tournament
-                </button>
-                <a href="{{ route('dashboard') }}"
-                   class="bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium
-                          px-6 py-2.5 rounded-xl transition text-sm">
-                    Cancel
-                </a>
-            </div>
+            <button type="submit" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-2.5 rounded-xl text-sm">Update Tournament</button>
         </form>
     </div>
 </div>
-
-<script>
-    // End date always >= start date
-    document.getElementById('start-date').addEventListener('change', function() {
-        document.getElementById('end-date').min = this.value;
-    });
-</script>
-
 @endsection

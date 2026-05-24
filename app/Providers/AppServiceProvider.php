@@ -2,6 +2,17 @@
 
 namespace App\Providers;
 
+use App\Models\Event;
+use App\Models\Matches;
+use App\Models\Player;
+use App\Models\Result;
+use App\Models\Team;
+use App\Policies\EventPolicy;
+use App\Policies\MatchPolicy;
+use App\Policies\PlayerPolicy;
+use App\Policies\ResultPolicy;
+use App\Policies\TeamPolicy;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +30,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Gate::policy(Event::class, EventPolicy::class);
+        Gate::policy(Team::class, TeamPolicy::class);
+        Gate::policy(Player::class, PlayerPolicy::class);
+        Gate::policy(Matches::class, MatchPolicy::class);
+        Gate::policy(Result::class, ResultPolicy::class);
     }
 }

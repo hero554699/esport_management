@@ -3,50 +3,78 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Models\Team;
+use App\Http\Requests\User\StorePlayerRequest;
+use App\Http\Requests\User\UpdatePlayerRequest;
 use App\Models\Player;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Team;
 
 class PlayerController extends Controller
 {
-    public function store(Request $request, Team $team)
+    public function index(Team $team)
     {
-        // Make sure user owns this team
-        if ($team->user_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorize('view', $team);
 
-        $validated = $request->validate([
-            'nickname'   => 'required|string|max:255',
-            'real_name'  => 'nullable|string|max:255',
-            'role'       => 'nullable|string|max:100',
-            'country'    => 'nullable|string|max:60',
-            'avatar_url' => 'nullable|url|max:500',
-        ]);
+        $players = $team->players()->latest()->get();
 
+        return view('user.players.index', compact('team', 'players'));
+    }
+
+    public function create(Team $team)
+    {
+        $this->authorize('create', [Player::class, $team]);
+
+        return view('user.players.create', compact('team'));
+    }
+
+    public function store(StorePlayerRequest $request, Team $team)
+    {
+        $this->authorize('create', [Player::class, $team]);
+
+        $validated = $request->validated();
         $validated['team_id'] = $team->id;
 
         Player::create($validated);
 
-        return redirect()->route('user.teams.show', $team)
+        return redirect()->route('user.teams.players.index', $team)
             ->with('success', 'Player added successfully!');
+    }
+
+    public function show(Team $team, Player $player)
+    {
+        $this->authorize('view', $team);
+        $this->authorize('view', $player);
+        abort_if($player->team_id !== $team->id, 404);
+
+        return view('user.players.show', compact('team', 'player'));
+    }
+
+    public function edit(Team $team, Player $player)
+    {
+        $this->authorize('update', $player);
+        abort_if($player->team_id !== $team->id, 404);
+
+        return view('user.players.edit', compact('team', 'player'));
+    }
+
+    public function update(UpdatePlayerRequest $request, Team $team, Player $player)
+    {
+        $this->authorize('update', $player);
+        abort_if($player->team_id !== $team->id, 404);
+
+        $player->update($request->validated());
+
+        return redirect()->route('user.teams.players.index', $team)
+            ->with('success', 'Player updated successfully!');
     }
 
     public function destroy(Team $team, Player $player)
     {
-        if ($team->user_id !== Auth::id()) {
-            abort(403);
-        }
-
-        // Make sure player belongs to this team
-        if ($player->team_id !== $team->id) {
-            abort(403);
-        }
+        $this->authorize('delete', $player);
+        abort_if($player->team_id !== $team->id, 404);
 
         $player->delete();
 
-        return redirect()->route('user.teams.show', $team)
+        return redirect()->route('user.teams.players.index', $team)
             ->with('success', 'Player removed.');
     }
 }

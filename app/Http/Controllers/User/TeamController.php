@@ -3,17 +3,24 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Models\Team;
+use App\Http\Requests\User\StoreTeamRequest;
+use App\Http\Requests\User\UpdateTeamRequest;
 use App\Models\Game;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use App\Models\Team;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class TeamController extends Controller
 {
     public function index()
     {
-        return redirect()->route('dashboard');
+        $teams = Team::where('user_id', Auth::id())
+            ->with(['game'])
+            ->withCount('players')
+            ->latest()
+            ->get();
+
+        return view('user.teams.index', compact('teams'));
     }
 
     public function create()
@@ -22,18 +29,10 @@ class TeamController extends Controller
         return view('user.teams.create', compact('games'));
     }
 
-    public function store(Request $request)
+    public function store(StoreTeamRequest $request)
     {
-        $validated = $request->validate([
-            'name'      => 'required|string|max:255',
-            'game_id'   => 'nullable|exists:games,id',
-            'tag'       => 'nullable|string|max:10',
-            'country'   => 'nullable|string|max:60',
-            'logo_url'  => 'nullable|url|max:500',
-            'logo_file' => 'nullable|image|max:2048',
-        ]);
+        $validated = $request->validated();
 
-        // Handle file upload
         if ($request->hasFile('logo_file')) {
             $path = $request->file('logo_file')->store('logos', 'public');
             $validated['logo_url'] = asset('storage/' . $path);
@@ -42,20 +41,17 @@ class TeamController extends Controller
         $validated['slug']    = Str::slug($validated['name']) . '-' . time();
         $validated['user_id'] = Auth::id();
 
-        // Remove logo_file from validated before creating
         unset($validated['logo_file']);
 
         Team::create($validated);
 
-        return redirect()->route('dashboard')
+        return redirect()->route('user.teams.index')
             ->with('success', 'Team created successfully!');
     }
 
     public function show(Team $team)
     {
-        if ($team->user_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorize('view', $team);
 
         $team->load(['players', 'game']);
 
@@ -64,43 +60,29 @@ class TeamController extends Controller
 
     public function edit(Team $team)
     {
-        if ($team->user_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorize('update', $team);
 
         $games = Game::where('is_active', true)->orderBy('name')->get();
         return view('user.teams.edit', compact('team', 'games'));
     }
 
-    public function update(Request $request, Team $team)
+    public function update(UpdateTeamRequest $request, Team $team)
     {
-        if ($team->user_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorize('update', $team);
 
-        $validated = $request->validate([
-            'name'     => 'required|string|max:255',
-            'game_id'  => 'nullable|exists:games,id',
-            'tag'      => 'nullable|string|max:10',
-            'country'  => 'nullable|string|max:60',
-            'logo_url' => 'nullable|url|max:500',
-        ]);
+        $team->update($request->validated());
 
-        $team->update($validated);
-
-        return redirect()->route('dashboard')
+        return redirect()->route('user.teams.index')
             ->with('success', 'Team updated successfully!');
     }
 
     public function destroy(Team $team)
     {
-        if ($team->user_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorize('delete', $team);
 
         $team->delete();
 
-        return redirect()->route('dashboard')
+        return redirect()->route('user.teams.index')
             ->with('success', 'Team deleted.');
     }
 }

@@ -13,6 +13,8 @@ return new class extends Migration
             $table->string('pandascore_id')->nullable()->unique();
             $table->unsignedBigInteger('game_id')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('team_a_id')->nullable();
+            $table->unsignedBigInteger('team_b_id')->nullable();
             $table->string('name');
             $table->string('slug')->unique();
             $table->enum('status', ['upcoming', 'live', 'completed'])->default('upcoming');

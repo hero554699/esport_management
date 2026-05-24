@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Team;
+use App\Http\Requests\Admin\StoreTeamRequest;
+use App\Http\Requests\Admin\UpdateTeamRequest;
 use App\Models\Game;
 use App\Models\Organization;
-use Illuminate\Http\Request;
+use App\Models\Team;
 
 class TeamController extends Controller
 {
@@ -19,7 +20,6 @@ class TeamController extends Controller
         return view('admin.teams.index', compact('teams'));
     }
 
-    
     public function show(Team $team)
     {
         $team->load(['players', 'game']);
@@ -33,25 +33,9 @@ class TeamController extends Controller
         return view('admin.teams.create', compact('games', 'organizations'));
     }
 
-    public function store(Request $request)
+    public function store(StoreTeamRequest $request)
     {
-        $request->validate([
-            'name'            => 'required|string|max:255',
-            'tag'             => 'required|string|max:10',
-            'game_id'         => 'required|exists:games,id',
-            'organization_id' => 'nullable|exists:organizations,id',
-            'country'         => 'nullable|string|max:60',
-            'logo_url'        => 'nullable|url',
-        ]);
-
-        Team::create($request->only([
-            'name',
-            'tag',
-            'game_id',
-            'organization_id',
-            'country',
-            'logo_url'
-        ]));
+        Team::create($request->validated());
 
         return redirect()->route('admin.teams.index')
             ->with('success', 'Team created successfully!');
@@ -64,25 +48,9 @@ class TeamController extends Controller
         return view('admin.teams.edit', compact('team', 'games', 'organizations'));
     }
 
-    public function update(Request $request, Team $team)
+    public function update(UpdateTeamRequest $request, Team $team)
     {
-        $request->validate([
-            'name'            => 'required|string|max:255',
-            'tag'             => 'required|string|max:10',
-            'game_id'         => 'required|exists:games,id',
-            'organization_id' => 'nullable|exists:organizations,id',
-            'country'         => 'nullable|string|max:60',
-            'logo_url'        => 'nullable|url',
-        ]);
-
-        $team->update($request->only([
-            'name',
-            'tag',
-            'game_id',
-            'organization_id',
-            'country',
-            'logo_url'
-        ]));
+        $team->update($request->validated());
 
         return redirect()->route('admin.teams.index')
             ->with('success', 'Team updated successfully!');
