@@ -3,37 +3,38 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\StoreEventRequest;
+use App\Http\Requests\User\UpdateEventRequest;
 use App\Models\Event;
 use App\Models\Game;
 use App\Models\Team;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class EventController extends Controller
 {
     public function index()
     {
-        return redirect()->route('dashboard');
+        $events = Event::where('user_id', Auth::id())
+            ->with(['game', 'teamA', 'teamB'])
+            ->withCount('matches')
+            ->latest()
+            ->get();
+
+        return view('user.events.index', compact('events'));
     }
 
     public function create()
     {
         $games = Game::where('is_active', true)->orderBy('name')->get();
-        return view('user.events.create', compact('games'));
+        $teams = Team::where('user_id', Auth::id())->orderBy('name')->get();
+
+        return view('user.events.create', compact('games', 'teams'));
     }
 
-    public function store(Request $request)
+    public function store(StoreEventRequest $request)
     {
-        $validated = $request->validate([
-            'name'       => 'required|string|max:255',
-            'game_id'    => 'required|exists:games,id',
-            'start_date' => 'required|date|after_or_equal:today',
-            'end_date'   => 'required|date|after_or_equal:start_date',
-            'prize_pool' => 'nullable|string|max:100',
-            'type'       => 'required|in:local,national,international,world',
-        ]);
-
+        $validated = $request->validated();
         $validated['slug']            = Str::slug($validated['name']) . '-' . time();
         $validated['user_id']         = Auth::id();
         $validated['status']          = 'upcoming';
@@ -41,67 +42,48 @@ class EventController extends Controller
 
         Event::create($validated);
 
-        return redirect()->route('dashboard')
+        return redirect()->route('user.events.index')
             ->with('success', 'Tournament created! Waiting for admin approval.');
     }
 
-    // Tournament detail — schedule matches here
     public function show(Event $event)
     {
-        if ($event->user_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorize('view', $event);
 
-        $event->load(['matches.teamA', 'matches.teamB', 'game']);
+        $event->load(['matches.teamA', 'matches.teamB', 'matches.result', 'game', 'teamA', 'teamB']);
 
-        // Only user-created teams for scheduling
-        $teams = Team::whereNull('pandascore_id')
-            ->orderBy('name')
-            ->get();
+        $teams = Team::where('user_id', Auth::id())->orderBy('name')->get();
 
         return view('user.events.show', compact('event', 'teams'));
     }
 
     public function edit(Event $event)
     {
-        if ($event->user_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorize('update', $event);
 
         $games = Game::where('is_active', true)->orderBy('name')->get();
-        return view('user.events.edit', compact('event', 'games'));
+        $teams = Team::where('user_id', Auth::id())->orderBy('name')->get();
+
+        return view('user.events.edit', compact('event', 'games', 'teams'));
     }
 
-    public function update(Request $request, Event $event)
+    public function update(UpdateEventRequest $request, Event $event)
     {
-        if ($event->user_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorize('update', $event);
 
-        $validated = $request->validate([
-            'name'       => 'required|string|max:255',
-            'game_id'    => 'required|exists:games,id',
-            'start_date' => 'required|date',
-            'end_date'   => 'required|date|after_or_equal:start_date',
-            'prize_pool' => 'nullable|string|max:100',
-            'type'       => 'required|in:local,national,international,world',
-        ]);
+        $event->update($request->validated());
 
-        $event->update($validated);
-
-        return redirect()->route('dashboard')
+        return redirect()->route('user.events.index')
             ->with('success', 'Tournament updated successfully!');
     }
 
     public function destroy(Event $event)
     {
-        if ($event->user_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorize('delete', $event);
 
         $event->delete();
 
-        return redirect()->route('dashboard')
+        return redirect()->route('user.events.index')
             ->with('success', 'Tournament deleted.');
     }
 }

@@ -69,9 +69,10 @@
             <div>
                 <label class="block text-sm text-gray-400 mb-1">Status</label>
                 <select name="status" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-orange-500">
-                    <option value="upcoming" {{ old('status', $match->status) == 'upcoming' ? 'selected' : '' }}>Upcoming</option>
+                    <option value="scheduled" {{ old('status', $match->status) == 'scheduled' ? 'selected' : '' }}>Scheduled</option>
                     <option value="live" {{ old('status', $match->status) == 'live' ? 'selected' : '' }}>Live</option>
                     <option value="completed" {{ old('status', $match->status) == 'completed' ? 'selected' : '' }}>Completed</option>
+                    <option value="cancelled" {{ old('status', $match->status) == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                 </select>
             </div>
         </div>

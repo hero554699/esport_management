@@ -44,10 +44,10 @@
             <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
             Live
         </a>
-        <a href="{{ route('matches.index', array_filter(['status' => 'upcoming', 'game' => $gameId ?? '', 'search' => $search ?? ''])) }}"
+        <a href="{{ route('matches.index', array_filter(['status' => 'scheduled', 'game' => $gameId ?? '', 'search' => $search ?? ''])) }}"
             class="px-4 py-2 rounded-lg text-sm font-medium transition
-                {{ $status === 'upcoming' ? 'bg-orange-500 text-white' : 'bg-gray-900 border border-gray-700 text-gray-400 hover:border-orange-500 hover:text-white' }}">
-            Upcoming
+                {{ $status === 'scheduled' ? 'bg-orange-500 text-white' : 'bg-gray-900 border border-gray-700 text-gray-400 hover:border-orange-500 hover:text-white' }}">
+            Scheduled
         </a>
         <a href="{{ route('matches.index', array_filter(['status' => 'completed', 'game' => $gameId ?? '', 'search' => $search ?? ''])) }}"
             class="px-4 py-2 rounded-lg text-sm font-medium transition
@@ -86,8 +86,10 @@
                                 <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
                                 LIVE
                             </span>
-                        @elseif($match->status === 'upcoming')
-                            <span class="text-xs font-semibold text-blue-400">UPCOMING</span>
+                        @elseif($match->status === 'scheduled')
+                            <span class="text-xs font-semibold text-blue-400">SCHEDULED</span>
+                        @elseif($match->status === 'cancelled')
+                            <span class="text-xs font-semibold text-red-300">CANCELLED</span>
                         @else
                             <span class="text-xs font-semibold text-gray-500">COMPLETED</span>
                         @endif

@@ -10,6 +10,8 @@ class Event extends Model
         'pandascore_id',
         'game_id',
         'user_id',
+        'team_a_id',
+        'team_b_id',
         'name',
         'slug',
         'status',
@@ -22,6 +24,14 @@ class Event extends Model
         'rejection_reason',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'start_date' => 'datetime',
+            'end_date' => 'datetime',
+        ];
+    }
+
     public function game()
     {
         return $this->belongsTo(Game::class);
@@ -30,6 +40,16 @@ class Event extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function teamA()
+    {
+        return $this->belongsTo(Team::class, 'team_a_id');
+    }
+
+    public function teamB()
+    {
+        return $this->belongsTo(Team::class, 'team_b_id');
     }
 
     public function matches()

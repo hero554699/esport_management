@@ -85,6 +85,15 @@
                 Matches
             </a>
 
+            <a href="{{ route('admin.results.index') }}"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition
+            {{ request()->routeIs('admin.results.*') ? 'bg-orange-500/10 text-orange-500 font-medium' : 'text-gray-400 hover:text-white hover:bg-gray-800' }}">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4V7m4 12H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v12a2 2 0 01-2 2z" />
+                </svg>
+                Results
+            </a>
+
             <a href="{{ route('admin.organizations.index') }}"
                 class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition
             {{ request()->routeIs('admin.organizations.*') ? 'bg-orange-500/10 text-orange-500 font-medium' : 'text-gray-400 hover:text-white hover:bg-gray-800' }}">

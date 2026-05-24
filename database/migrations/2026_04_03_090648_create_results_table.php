@@ -14,6 +14,8 @@ return new class extends Migration
             $table->unsignedBigInteger('winner_team_id')->nullable();
             $table->integer('score_a')->nullable();
             $table->integer('score_b')->nullable();
+            $table->unsignedBigInteger('mvp_player')->nullable();
+            $table->string('notes', 500)->nullable();
             $table->timestamps();
         });
 
@@ -21,6 +23,7 @@ return new class extends Migration
         Schema::table('results', function (Blueprint $table) {
             $table->foreign('match_id')->references('id')->on('matches')->onDelete('cascade');
             $table->foreign('winner_team_id')->references('id')->on('teams')->onDelete('cascade');
+            $table->foreign('mvp_player')->references('id')->on('players')->nullOnDelete();
         });
     }
 

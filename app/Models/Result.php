@@ -24,4 +24,9 @@ class Result extends Model
     {
         return $this->belongsTo(Team::class, 'winner_team_id');
     }
+
+    public function mvp()
+    {
+        return $this->belongsTo(Player::class, 'mvp_player');
+    }
 }

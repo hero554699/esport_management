@@ -43,8 +43,10 @@
                 <td class="px-4 py-3">
                     @if($match->status === 'live')
                     <span class="bg-red-500/20 text-red-400 px-2 py-1 rounded-full text-xs">LIVE</span>
-                    @elseif($match->status === 'upcoming')
-                    <span class="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full text-xs">UPCOMING</span>
+                    @elseif($match->status === 'scheduled')
+                    <span class="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full text-xs">SCHEDULED</span>
+                    @elseif($match->status === 'cancelled')
+                    <span class="bg-red-500/20 text-red-300 px-2 py-1 rounded-full text-xs">CANCELLED</span>
                     @else
                     <span class="bg-gray-500/20 text-gray-400 px-2 py-1 rounded-full text-xs">COMPLETED</span>
                     @endif

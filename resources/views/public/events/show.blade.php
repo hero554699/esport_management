@@ -74,8 +74,10 @@
                                     <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
                                     LIVE
                                 </span>
-                            @elseif($match->status === 'upcoming')
-                                <span class="text-xs font-semibold text-blue-400">UPCOMING</span>
+                            @elseif($match->status === 'scheduled')
+                                <span class="text-xs font-semibold text-blue-400">SCHEDULED</span>
+                            @elseif($match->status === 'cancelled')
+                                <span class="text-xs font-semibold text-red-300">CANCELLED</span>
                             @else
                                 <span class="text-xs font-semibold text-gray-500">COMPLETED</span>
                             @endif
