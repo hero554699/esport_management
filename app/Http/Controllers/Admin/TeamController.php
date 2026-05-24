@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\UpdateTeamRequest;
 use App\Models\Game;
 use App\Models\Organization;
 use App\Models\Team;
+use Illuminate\Support\Str;
 
 class TeamController extends Controller
 {
@@ -35,7 +36,10 @@ class TeamController extends Controller
 
     public function store(StoreTeamRequest $request)
     {
-        Team::create($request->validated());
+        $validated = $request->validated();
+        $validated['slug'] = Str::slug($validated['name']) . '-' . time();
+
+        Team::create($validated);
 
         return redirect()->route('admin.teams.index')
             ->with('success', 'Team created successfully!');
