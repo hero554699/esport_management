@@ -196,6 +196,7 @@ class SyncPandaScore extends Command
                     'pandascore_id' => (string) $t['id'],
                     'game_id'       => $game?->id ?? $slugExists->game_id,
                     'status'        => $this->mapStatus($t),
+                    'approval_status' => 'approved',
                 ]);
                 $count++;
                 continue;
@@ -212,6 +213,7 @@ class SyncPandaScore extends Command
                     'end_date'   => isset($t['end_at']) ? date('Y-m-d', strtotime($t['end_at'])) : null,
                     'prize_pool' => $t['prizepool'] ?? null,
                     'status'     => $this->mapStatus($t),
+                    'approval_status' => 'approved',
                 ]
             );
             $count++;
