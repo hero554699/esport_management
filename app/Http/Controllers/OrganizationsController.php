@@ -14,4 +14,13 @@ class OrganizationsController extends Controller
 
         return view('public.organizations.index', compact('organizations'));
     }
+
+    public function show(Organization $organization)
+    {
+        $organization->load(['teams' => function ($query) {
+            $query->orderBy('name');
+        }]);
+
+        return view('public.organizations.show', compact('organization'));
+    }
 }

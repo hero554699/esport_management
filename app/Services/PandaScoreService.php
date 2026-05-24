@@ -121,4 +121,13 @@ class PandaScoreService
             'sort'     => 'scheduled_at',
         ]);
     }
+
+    public function getOrganizations(int $page = 1): array
+    {
+        return $this->get('teams', [
+            'per_page' => 100,
+            'page'     => $page,
+            'sort'     => '-modified_at',
+        ]);
+    }
 }

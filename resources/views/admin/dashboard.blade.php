@@ -1,59 +1,38 @@
-@extends('layouts.public')
+@extends('layouts.admin')
 @section('title', 'Admin Dashboard')
+@section('page-title', 'Dashboard')
 
 @section('content')
-<div class="min-h-screen bg-gray-900">
-    <!-- Header -->
-    <div class="bg-gray-900 border-b border-gray-800">
-        <div class="max-w-7xl mx-auto px-4 py-8">
-            <h1 class="text-3xl font-bold text-white">Admin Dashboard</h1>
-            <p class="text-gray-400 mt-2">Platform management & tournament approvals</p>
+<div class="p-8">
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 hover:border-orange-500/50 transition">
+            <p class="text-gray-400 text-sm mb-2">Pending Approvals</p>
+            <p class="text-3xl font-bold text-red-500">{{ $stats['pending_approvals'] }}</p>
+            <p class="text-xs text-gray-600 mt-1">User submitted</p>
+        </div>
+        <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 hover:border-orange-500/50 transition">
+            <p class="text-gray-400 text-sm mb-2">User Tournaments</p>
+            <p class="text-3xl font-bold text-blue-500">{{ $stats['user_events'] }}</p>
+            <p class="text-xs text-gray-600 mt-1">Community created</p>
+        </div>
+        <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 hover:border-orange-500/50 transition">
+            <p class="text-gray-400 text-sm mb-2">PandaScore Tournaments</p>
+            <p class="text-3xl font-bold text-green-500">{{ $stats['pandascore_events'] }}</p>
+            <p class="text-xs text-gray-600 mt-1">Auto-approved</p>
+        </div>
+        <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 hover:border-orange-500/50 transition">
+            <p class="text-gray-400 text-sm mb-2">All Players</p>
+            <p class="text-3xl font-bold text-orange-500">{{ $stats['players'] }}</p>
+            <p class="text-xs text-gray-600 mt-1">From all sources</p>
         </div>
     </div>
 
-    <!-- Stats -->
-    <div class="max-w-7xl mx-auto px-4 py-8">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 hover:border-orange-500/50 transition">
-                <p class="text-gray-400 text-sm mb-2">Pending Approvals</p>
-                <p class="text-3xl font-bold text-red-500">{{ $stats['pending_approvals'] }}</p>
-                <p class="text-xs text-gray-600 mt-1">Awaiting review</p>
-            </div>
-            <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 hover:border-orange-500/50 transition">
-                <p class="text-gray-400 text-sm mb-2">Tournaments</p>
-                <p class="text-3xl font-bold text-orange-500">{{ $stats['user_events'] }}</p>
-            </div>
-            <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 hover:border-orange-500/50 transition">
-                <p class="text-gray-400 text-sm mb-2">Teams</p>
-                <p class="text-3xl font-bold text-orange-500">{{ $stats['user_teams'] }}</p>
-            </div>
-            <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 hover:border-orange-500/50 transition">
-                <p class="text-gray-400 text-sm mb-2">Total Players</p>
-                <p class="text-3xl font-bold text-orange-500">{{ $stats['players'] }}</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Management Actions -->
-    <div class="max-w-7xl mx-auto px-4 py-6">
-        <div class="flex gap-4 flex-wrap mb-8">
-            <a href="{{ route('admin.games.index') }}" class="border border-gray-700 hover:border-orange-500 text-white px-6 py-3 rounded-xl transition">
-                Manage Games
-            </a>
-            <a href="{{ route('admin.organizations.index') }}" class="border border-gray-700 hover:border-orange-500 text-white px-6 py-3 rounded-xl transition">
-                Manage Organizations
-            </a>
-            <a href="{{ route('admin.events.index') }}" class="border border-gray-700 hover:border-orange-500 text-white px-6 py-3 rounded-xl transition">
-                View All Events
-            </a>
-        </div>
-    </div>
-
-    <!-- Pending Tournaments for Approval -->
-    <div class="max-w-7xl mx-auto px-4 py-8 border-t border-gray-800">
+    <!-- Pending User Tournaments Section -->
+    <div class="mb-8">
         <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
             <span class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
-            Pending Tournament Approvals
+            Pending Tournament Approvals (User Submitted Only)
         </h2>
 
         @forelse($pendingEvents as $event)
@@ -62,7 +41,7 @@
                 <div class="flex items-center justify-between mb-3">
                     <div>
                         <h3 class="text-xl font-bold text-white">{{ $event->name }}</h3>
-                        <p class="text-gray-400 text-sm mt-1">Submitted by: <strong>{{ $event->user?->name }}</strong></p>
+                        <p class="text-gray-400 text-sm mt-1">Submitted by: <strong>{{ $event->user?->name ?? 'Unknown' }}</strong></p>
                     </div>
                     <span class="bg-yellow-500/20 text-yellow-400 text-xs px-3 py-1 rounded-full">PENDING REVIEW</span>
                 </div>
@@ -78,7 +57,13 @@
                     </div>
                     <div>
                         <p class="text-gray-400">Start Date</p>
-                        <p class="text-white font-semibold">{{ $event->start_date?->format('M d, Y') }}</p>
+                        <p class="text-white font-semibold">
+                            @if($event->start_date)
+                            {{ \Carbon\Carbon::parse($event->start_date)->format('M d, Y') }}
+                            @else
+                            N/A
+                            @endif
+                        </p>
                     </div>
                     <div>
                         <p class="text-gray-400">Prize Pool</p>
@@ -109,16 +94,16 @@
         @empty
         <div class="text-center py-12 bg-gray-800 border border-gray-700 rounded-xl">
             <p class="text-gray-400 text-lg">✓ No pending approvals</p>
-            <p class="text-gray-600 text-sm mt-1">All tournaments are approved!</p>
+            <p class="text-gray-600 text-sm mt-1">All user tournaments are approved or rejected!</p>
         </div>
         @endforelse
     </div>
 
-    <!-- Recent Approved -->
-    <div class="max-w-7xl mx-auto px-4 py-8 border-t border-gray-800">
+    <!-- Recently Approved (User) -->
+    <div class="mb-8">
         <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
             <span class="w-3 h-3 bg-green-500 rounded-full"></span>
-            Recently Approved
+            Recently Approved (User Submitted)
         </h2>
 
         @forelse($recentApproved as $event)
@@ -126,7 +111,14 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h3 class="text-lg font-bold text-white">{{ $event->name }}</h3>
-                    <p class="text-gray-400 text-sm">{{ $event->game?->name }} • {{ $event->start_date?->format('M d, Y') }}</p>
+                    <p class="text-gray-400 text-sm">
+                        {{ $event->game?->name }} •
+                        @if($event->start_date)
+                        {{ \Carbon\Carbon::parse($event->start_date)->format('M d, Y') }}
+                        @else
+                        N/A
+                        @endif
+                    </p>
                 </div>
                 <span class="bg-green-500/20 text-green-400 text-xs px-3 py-1 rounded-full">APPROVED</span>
             </div>
@@ -136,11 +128,11 @@
         @endforelse
     </div>
 
-    <!-- Recent Rejected -->
-    <div class="max-w-7xl mx-auto px-4 py-8 border-t border-gray-800">
+    <!-- Recently Rejected (User) -->
+    <div class="mb-8">
         <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
             <span class="w-3 h-3 bg-red-500 rounded-full"></span>
-            Recently Rejected
+            Recently Rejected (User Submitted)
         </h2>
 
         @forelse($recentRejected as $event)

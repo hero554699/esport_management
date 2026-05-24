@@ -11,19 +11,24 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         @forelse($organizations as $org)
         <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-orange-500/50 transition">
-            <div class="flex items-start justify-between mb-3">
+            <div class="flex items-start justify-between mb-4">
                 <div>
                     <h3 class="font-semibold text-white">{{ $org->name }}</h3>
                     <p class="text-gray-500 text-xs mt-0.5">{{ $org->country ?? 'Unknown' }}</p>
                 </div>
-                <span class="text-xs text-orange-500">{{ $org->teams_count }} teams</span>
             </div>
-            @if($org->website)
-            <a href="{{ $org->website }}" target="_blank"
-                class="text-xs text-gray-500 hover:text-orange-500 transition mt-2 inline-block">
-                Visit website →
-            </a>
-            @endif
+            
+            <div class="flex items-center justify-between pt-3 border-t border-gray-800">
+                <span class="text-xs text-orange-500 font-semibold">{{ $org->teams_count }} teams</span>
+                @if($org->website)
+                <a href="{{ $org->website }}" target="_blank" rel="noopener noreferrer"
+                    class="text-xs text-orange-500 hover:text-orange-400 transition">
+                    View Organization →
+                </a>
+                @else
+                <span class="text-xs text-gray-600">No website</span>
+                @endif
+            </div>
         </div>
         @empty
         <div class="col-span-3 text-center py-20 text-gray-500">No organizations found.</div>

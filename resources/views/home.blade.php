@@ -70,37 +70,37 @@
             <h2 class="text-xl font-bold">Live Matches</h2>
         </div>
         <a href="{{ route('matches.index') }}?status=live"
-           class="text-orange-500 hover:text-orange-400 text-sm transition">View all →</a>
+            class="text-orange-500 hover:text-orange-400 text-sm transition">View all →</a>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         @foreach($liveMatches as $match)
-            <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-orange-500/50 transition">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-xs bg-red-500/20 text-red-400 px-2 py-1 rounded-full flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
-                        LIVE
-                    </span>
-                    <span class="text-xs text-gray-500">{{ $match->event?->game?->name ?? '' }}</span>
-                </div>
-                <div class="flex items-center justify-between gap-2">
-                    <div class="flex items-center gap-2 flex-1 justify-end">
-                        @if($match->teamA?->logo_url)
-                            <img src="{{ $match->teamA->logo_url }}"
-                                 class="w-6 h-6 rounded object-cover">
-                        @endif
-                        <span class="font-semibold text-sm text-right">{{ $match->teamA?->name }}</span>
-                    </div>
-                    <span class="text-orange-500 text-xs font-bold flex-shrink-0">VS</span>
-                    <div class="flex items-center gap-2 flex-1">
-                        <span class="font-semibold text-sm">{{ $match->teamB?->name }}</span>
-                        @if($match->teamB?->logo_url)
-                            <img src="{{ $match->teamB->logo_url }}"
-                                 class="w-6 h-6 rounded object-cover">
-                        @endif
-                    </div>
-                </div>
-                <p class="text-gray-500 text-xs mt-2 truncate">{{ $match->event?->name }}</p>
+        <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-orange-500/50 transition">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs bg-red-500/20 text-red-400 px-2 py-1 rounded-full flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
+                    LIVE
+                </span>
+                <span class="text-xs text-gray-500">{{ $match->event?->game?->name ?? '' }}</span>
             </div>
+            <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 flex-1 justify-end">
+                    @if($match->teamA?->logo_url)
+                    <img src="{{ $match->teamA->logo_url }}"
+                        class="w-6 h-6 rounded object-cover">
+                    @endif
+                    <span class="font-semibold text-sm text-right">{{ $match->teamA?->name }}</span>
+                </div>
+                <span class="text-orange-500 text-xs font-bold flex-shrink-0">VS</span>
+                <div class="flex items-center gap-2 flex-1">
+                    <span class="font-semibold text-sm">{{ $match->teamB?->name }}</span>
+                    @if($match->teamB?->logo_url)
+                    <img src="{{ $match->teamB->logo_url }}"
+                        class="w-6 h-6 rounded object-cover">
+                    @endif
+                </div>
+            </div>
+            <p class="text-gray-500 text-xs mt-2 truncate">{{ $match->event?->name }}</p>
+        </div>
         @endforeach
     </div>
 </section>
@@ -112,24 +112,24 @@
     <div class="flex items-center justify-between mb-6">
         <h2 class="text-xl font-bold">Live Events</h2>
         <a href="{{ route('events.index') }}?status=live"
-           class="text-orange-500 hover:text-orange-400 text-sm transition">View all →</a>
+            class="text-orange-500 hover:text-orange-400 text-sm transition">View all →</a>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         @foreach($liveEvents as $event)
-            <a href="{{ route('events.show', $event) }}"
-                class="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-orange-500/50 transition block">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-xs bg-red-500/20 text-red-400 px-2 py-1 rounded-full flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
-                        LIVE
-                    </span>
-                    <span class="text-xs text-gray-500">{{ $event->game?->name }}</span>
-                </div>
-                <h3 class="font-semibold text-white">{{ $event->name }}</h3>
-                @if($event->prize_pool)
-                    <p class="text-orange-500 text-sm mt-1">{{ $event->prize_pool }}</p>
-                @endif
-            </a>
+        <a href="{{ route('events.show', $event) }}"
+            class="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-orange-500/50 transition block">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs bg-red-500/20 text-red-400 px-2 py-1 rounded-full flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
+                    LIVE
+                </span>
+                <span class="text-xs text-gray-500">{{ $event->game?->name }}</span>
+            </div>
+            <h3 class="font-semibold text-white">{{ $event->name }}</h3>
+            @if($event->prize_pool)
+            <p class="text-orange-500 text-sm mt-1">{{ $event->prize_pool }}</p>
+            @endif
+        </a>
         @endforeach
     </div>
 </section>
@@ -141,24 +141,24 @@
     <div class="flex items-center justify-between mb-6">
         <h2 class="text-xl font-bold">Upcoming Events</h2>
         <a href="{{ route('events.index') }}?status=upcoming"
-           class="text-orange-500 hover:text-orange-400 text-sm transition">View all →</a>
+            class="text-orange-500 hover:text-orange-400 text-sm transition">View all →</a>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         @foreach($upcomingEvents as $event)
-            <a href="{{ route('events.show', $event) }}"
-                class="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-orange-500/50 transition block">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full">UPCOMING</span>
-                    <span class="text-xs text-gray-500">{{ $event->game?->name }}</span>
-                </div>
-                <h3 class="font-semibold text-white">{{ $event->name }}</h3>
-                <p class="text-gray-400 text-xs mt-1">
-                    {{ \Carbon\Carbon::parse($event->start_date)->format('M d, Y') }}
-                </p>
-                @if($event->prize_pool)
-                    <p class="text-orange-500 text-sm">{{ $event->prize_pool }}</p>
-                @endif
-            </a>
+        <a href="{{ route('events.show', $event) }}"
+            class="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-orange-500/50 transition block">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full">UPCOMING</span>
+                <span class="text-xs text-gray-500">{{ $event->game?->name }}</span>
+            </div>
+            <h3 class="font-semibold text-white">{{ $event->name }}</h3>
+            <p class="text-gray-400 text-xs mt-1">
+                {{ $event->start_date ? \Carbon\Carbon::parse($event->start_date)->format('M d, Y') : 'Date TBD' }}
+            </p>
+            @if($event->prize_pool)
+            <p class="text-orange-500 text-sm">{{ $event->prize_pool }}</p>
+            @endif
+        </a>
         @endforeach
     </div>
 </section>
@@ -170,60 +170,60 @@
     <div class="flex items-center justify-between mb-6">
         <h2 class="text-xl font-bold">Recent Results</h2>
         <a href="{{ route('matches.index') }}?status=completed"
-           class="text-orange-500 hover:text-orange-400 text-sm transition">View all →</a>
+            class="text-orange-500 hover:text-orange-400 text-sm transition">View all →</a>
     </div>
     <div class="flex flex-col gap-3">
         @foreach($recentMatches as $match)
-            <div class="bg-gray-900 border border-gray-800 rounded-xl px-5 py-4
+        <div class="bg-gray-900 border border-gray-800 rounded-xl px-5 py-4
                         hover:border-orange-500/50 transition">
-                <div class="flex items-center gap-4">
-                    <span class="text-xs text-gray-600 min-w-[80px]">
-                        {{ $match->scheduled_at
+            <div class="flex items-center gap-4">
+                <span class="text-xs text-gray-600 min-w-[80px]">
+                    {{ $match->scheduled_at
                             ? \Carbon\Carbon::parse($match->scheduled_at)->format('M d')
                             : '' }}
-                    </span>
-                    <div class="flex items-center gap-3 flex-1 justify-center">
-                        <div class="flex items-center gap-2 flex-1 justify-end">
-                            @if($match->teamA?->logo_url)
-                                <img src="{{ $match->teamA->logo_url }}"
-                                     class="w-6 h-6 rounded object-cover">
-                            @endif
-                            <span class="font-semibold text-sm
+                </span>
+                <div class="flex items-center gap-3 flex-1 justify-center">
+                    <div class="flex items-center gap-2 flex-1 justify-end">
+                        @if($match->teamA?->logo_url)
+                        <img src="{{ $match->teamA->logo_url }}"
+                            class="w-6 h-6 rounded object-cover">
+                        @endif
+                        <span class="font-semibold text-sm
                                 {{ $match->result?->winner_team_id === $match->team_a_id ? 'text-orange-500' : 'text-white' }}">
-                                {{ $match->teamA?->name }}
-                            </span>
-                        </div>
-                        <div class="flex items-center gap-1 min-w-[50px] justify-center">
-                            @if($match->result)
-                                <span class="font-bold text-sm
-                                    {{ $match->result->winner_team_id === $match->team_a_id ? 'text-orange-500' : 'text-white' }}">
-                                    {{ $match->result->score_a ?? 0 }}
-                                </span>
-                                <span class="text-gray-600 text-xs">:</span>
-                                <span class="font-bold text-sm
-                                    {{ $match->result->winner_team_id === $match->team_b_id ? 'text-orange-500' : 'text-white' }}">
-                                    {{ $match->result->score_b ?? 0 }}
-                                </span>
-                            @else
-                                <span class="text-gray-600 text-xs">FT</span>
-                            @endif
-                        </div>
-                        <div class="flex items-center gap-2 flex-1">
-                            <span class="font-semibold text-sm
-                                {{ $match->result?->winner_team_id === $match->team_b_id ? 'text-orange-500' : 'text-white' }}">
-                                {{ $match->teamB?->name }}
-                            </span>
-                            @if($match->teamB?->logo_url)
-                                <img src="{{ $match->teamB->logo_url }}"
-                                     class="w-6 h-6 rounded object-cover">
-                            @endif
-                        </div>
+                            {{ $match->teamA?->name }}
+                        </span>
                     </div>
-                    <span class="text-xs text-gray-600 min-w-[80px] text-right">
-                        {{ $match->event?->game?->name }}
-                    </span>
+                    <div class="flex items-center gap-1 min-w-[50px] justify-center">
+                        @if($match->result)
+                        <span class="font-bold text-sm
+                                    {{ $match->result->winner_team_id === $match->team_a_id ? 'text-orange-500' : 'text-white' }}">
+                            {{ $match->result->score_a ?? 0 }}
+                        </span>
+                        <span class="text-gray-600 text-xs">:</span>
+                        <span class="font-bold text-sm
+                                    {{ $match->result->winner_team_id === $match->team_b_id ? 'text-orange-500' : 'text-white' }}">
+                            {{ $match->result->score_b ?? 0 }}
+                        </span>
+                        @else
+                        <span class="text-gray-600 text-xs">FT</span>
+                        @endif
+                    </div>
+                    <div class="flex items-center gap-2 flex-1">
+                        <span class="font-semibold text-sm
+                                {{ $match->result?->winner_team_id === $match->team_b_id ? 'text-orange-500' : 'text-white' }}">
+                            {{ $match->teamB?->name }}
+                        </span>
+                        @if($match->teamB?->logo_url)
+                        <img src="{{ $match->teamB->logo_url }}"
+                            class="w-6 h-6 rounded object-cover">
+                        @endif
+                    </div>
                 </div>
+                <span class="text-xs text-gray-600 min-w-[80px] text-right">
+                    {{ $match->event?->game?->name }}
+                </span>
             </div>
+        </div>
         @endforeach
     </div>
 </section>
@@ -234,38 +234,38 @@
     <div class="flex items-center justify-between mb-6">
         <h2 class="text-xl font-bold">Popular Games</h2>
         <a href="{{ route('games.index') }}"
-           class="text-orange-500 hover:text-orange-400 text-sm transition">View all →</a>
+            class="text-orange-500 hover:text-orange-400 text-sm transition">View all →</a>
     </div>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         @foreach($games as $game)
-            <a href="{{ route('events.index') }}?game={{ $game->id }}"
-                class="bg-gray-900 border border-gray-800 rounded-xl p-4
+        <a href="{{ route('events.index') }}?game={{ $game->id }}"
+            class="bg-gray-900 border border-gray-800 rounded-xl p-4
                        hover:border-orange-500/50 transition text-center group">
-                @if($game->logo_url)
-                    <img src="{{ $game->logo_url }}" alt="{{ $game->name }}"
-                         class="w-12 h-12 rounded-lg object-cover mx-auto mb-3">
-                @else
-                    <div class="w-12 h-12 rounded-lg bg-orange-500/20 border border-orange-500/30
+            @if($game->logo_url)
+            <img src="{{ $game->logo_url }}" alt="{{ $game->name }}"
+                class="w-12 h-12 rounded-lg object-cover mx-auto mb-3">
+            @else
+            <div class="w-12 h-12 rounded-lg bg-orange-500/20 border border-orange-500/30
                                 flex items-center justify-center mx-auto mb-3">
-                        <span class="text-orange-500 font-bold text-sm">
-                            {{ strtoupper(substr($game->name, 0, 2)) }}
-                        </span>
-                    </div>
+                <span class="text-orange-500 font-bold text-sm">
+                    {{ strtoupper(substr($game->name, 0, 2)) }}
+                </span>
+            </div>
+            @endif
+            <p class="font-semibold text-sm text-white group-hover:text-orange-500 transition">
+                {{ $game->name }}
+            </p>
+            <div class="flex items-center justify-center gap-3 mt-2">
+                @if($game->platform === 'mobile')
+                <span class="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">Mobile</span>
+                @elseif($game->platform === 'pc')
+                <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full">PC</span>
+                @else
+                <span class="text-xs bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded-full">Console</span>
                 @endif
-                <p class="font-semibold text-sm text-white group-hover:text-orange-500 transition">
-                    {{ $game->name }}
-                </p>
-                <div class="flex items-center justify-center gap-3 mt-2">
-                    @if($game->platform === 'mobile')
-                        <span class="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">Mobile</span>
-                    @elseif($game->platform === 'pc')
-                        <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full">PC</span>
-                    @else
-                        <span class="text-xs bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded-full">Console</span>
-                    @endif
-                    <span class="text-xs text-gray-600">{{ $game->events_count }} events</span>
-                </div>
-            </a>
+                <span class="text-xs text-gray-600">{{ $game->events_count }} events</span>
+            </div>
+        </a>
         @endforeach
     </div>
 </section>
@@ -276,29 +276,29 @@
     <div class="flex items-center justify-between mb-6">
         <h2 class="text-xl font-bold">Top Teams</h2>
         <a href="{{ route('teams.index') }}"
-           class="text-orange-500 hover:text-orange-400 text-sm transition">View all →</a>
+            class="text-orange-500 hover:text-orange-400 text-sm transition">View all →</a>
     </div>
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         @foreach($famousTeams as $team)
-            <a href="{{ route('teams.index') }}"
-                class="bg-gray-900 border border-gray-800 rounded-xl p-4
+        <a href="{{ route('teams.index') }}"
+            class="bg-gray-900 border border-gray-800 rounded-xl p-4
                        hover:border-orange-500/50 transition text-center group">
-                @if($team->logo_url)
-                    <img src="{{ $team->logo_url }}" alt="{{ $team->name }}"
-                         class="w-12 h-12 rounded-lg object-cover mx-auto mb-3">
-                @else
-                    <div class="w-12 h-12 rounded-lg bg-orange-500/20 border border-orange-500/30
+            @if($team->logo_url)
+            <img src="{{ $team->logo_url }}" alt="{{ $team->name }}"
+                class="w-12 h-12 rounded-lg object-cover mx-auto mb-3">
+            @else
+            <div class="w-12 h-12 rounded-lg bg-orange-500/20 border border-orange-500/30
                                 flex items-center justify-center mx-auto mb-3">
-                        <span class="text-orange-500 font-bold text-sm">
-                            {{ strtoupper(substr($team->name, 0, 2)) }}
-                        </span>
-                    </div>
-                @endif
-                <p class="font-semibold text-xs text-white group-hover:text-orange-500 transition truncate">
-                    {{ $team->name }}
-                </p>
-                <p class="text-gray-600 text-xs mt-1">{{ $team->players_count }} players</p>
-            </a>
+                <span class="text-orange-500 font-bold text-sm">
+                    {{ strtoupper(substr($team->name, 0, 2)) }}
+                </span>
+            </div>
+            @endif
+            <p class="font-semibold text-xs text-white group-hover:text-orange-500 transition truncate">
+                {{ $team->name }}
+            </p>
+            <p class="text-gray-600 text-xs mt-1">{{ $team->players_count }} players</p>
+        </a>
         @endforeach
     </div>
 </section>

@@ -11,9 +11,11 @@ return new class extends Migration
         Schema::create('organizations', function (Blueprint $table) {
             $table->id();
             $table->string('pandascore_id')->nullable()->unique();
-            $table->string('name')->unique();
-            $table->string('slug')->unique();
+            $table->string('name');
+            $table->string('slug');
             $table->string('logo_url')->nullable();
+            $table->string('website')->nullable();
+            $table->string('country')->nullable();
             $table->timestamps();
         });
     }

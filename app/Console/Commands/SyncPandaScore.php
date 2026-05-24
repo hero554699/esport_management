@@ -10,12 +10,14 @@ use App\Models\Player;
 use App\Models\Event;
 use App\Models\Matches;
 use App\Models\Result;
+use App\Models\Organization;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class SyncPandaScore extends Command
 {
     protected $signature = 'pandascore:sync
-                            {--type=all : What to sync: all|games|teams|players|tournaments|matches}';
+                            {--type=all : What to sync: all|games|teams|players|tournaments|matches|organizations}';
 
     protected $description = 'Sync data from PandaScore API into the database';
 
@@ -25,6 +27,10 @@ class SyncPandaScore extends Command
 
         $this->info("PandaScore sync starting - type: {$type}");
         $this->newLine();
+
+        if (in_array($type, ['all', 'organizations'])) {
+            $this->syncOrganizations($service);
+        }
 
         if (in_array($type, ['all', 'games'])) {
             $this->syncGames($service);
@@ -50,6 +56,44 @@ class SyncPandaScore extends Command
         $this->info('Sync complete!');
 
         return self::SUCCESS;
+    }
+
+    private function syncOrganizations(PandaScoreService $service): void
+    {
+        $this->line('-> Syncing organizations...');
+
+        $organizations = $service->getOrganizations();
+        $count = 0;
+
+        foreach ($organizations as $o) {
+            $slug = $o['slug'] ?? Str::slug($o['name'] . '-' . $o['id']);
+            $website = null;
+
+            // Try multiple ways to get website
+            if (isset($o['official_website']) && !empty($o['official_website'])) {
+                $website = $o['official_website'];
+            } elseif (isset($o['website']) && !empty($o['website'])) {
+                $website = $o['website'];
+            } elseif (isset($o['url']) && !empty($o['url'])) {
+                $website = $o['url'];
+            }
+
+            Organization::updateOrCreate(
+                ['pandascore_id' => (string) $o['id']],
+                [
+                    'name'     => $o['name'],
+                    'slug'     => $slug,
+                    'logo_url' => $o['image_url'] ?? null,
+                    'website'  => $website,
+                    'country'  => $o['location'] ?? null,
+                ]
+            );
+            $count++;
+
+            $this->info("  Synced: {$o['name']} | Website: " . ($website ? 'YES' : 'NO'));
+        }
+
+        $this->info("  {$count} organizations synced");
     }
 
     private function syncGames(PandaScoreService $service): void
@@ -100,18 +144,29 @@ class SyncPandaScore extends Command
             if (empty($teams)) break;
 
             foreach ($teams as $t) {
-                $slug    = $t['slug'] ?? Str::slug($t['name']);
+                $slug    = $t['slug'] ?? Str::slug($t['name'] . '-' . $t['id']);
                 $acronym = isset($t['acronym']) ? substr($t['acronym'], 0, 10) : null;
+
+                // Find organization - try multiple fields
+                $organization = null;
+                if (isset($t['current_organization']['id'])) {
+                    $organization = Organization::where('pandascore_id', (string) $t['current_organization']['id'])->first();
+                    if ($organization) {
+                        $this->info("  Team '{$t['name']}' linked to org '{$organization->name}'");
+                    }
+                }
 
                 Team::updateOrCreate(
                     ['pandascore_id' => (string) $t['id']],
                     [
-                        'name'     => $t['name'],
-                        'slug'     => $slug,
-                        'acronym'  => $acronym,
-                        'tag'      => $acronym,
-                        'logo_url' => $t['image_url'] ?? null,
-                        'location' => $t['location'] ?? null,
+                        'name'            => $t['name'],
+                        'slug'            => $slug,
+                        'acronym'         => $acronym,
+                        'tag'             => $acronym,
+                        'logo_url'        => $t['image_url'] ?? null,
+                        'location'        => $t['location'] ?? null,
+                        'country'         => $t['location'] ?? null,
+                        'organization_id' => $organization?->id,
                     ]
                 );
                 $count++;
@@ -193,9 +248,10 @@ class SyncPandaScore extends Command
 
             if ($slugExists) {
                 $slugExists->update([
-                    'pandascore_id' => (string) $t['id'],
-                    'game_id'       => $game?->id ?? $slugExists->game_id,
-                    'status'        => $this->mapStatus($t),
+                    'pandascore_id'   => (string) $t['id'],
+                    'game_id'         => $game?->id ?? $slugExists->game_id,
+                    'status'          => $this->mapStatus($t),
+                    'approval_status' => 'approved',  // PandaScore events are auto-approved
                 ]);
                 $count++;
                 continue;
@@ -204,20 +260,21 @@ class SyncPandaScore extends Command
             Event::updateOrCreate(
                 ['pandascore_id' => (string) $t['id']],
                 [
-                    'name'       => $t['name'],
-                    'slug'       => $slug,
-                    'game_id'    => $game?->id ?? null,
-                    'user_id'    => 1,
-                    'start_date' => isset($t['begin_at']) ? date('Y-m-d', strtotime($t['begin_at'])) : null,
-                    'end_date'   => isset($t['end_at']) ? date('Y-m-d', strtotime($t['end_at'])) : null,
-                    'prize_pool' => $t['prizepool'] ?? null,
-                    'status'     => $this->mapStatus($t),
+                    'name'              => $t['name'],
+                    'slug'              => $slug,
+                    'game_id'           => $game?->id ?? null,
+                    'user_id'           => 1,  // System user
+                    'start_date'        => isset($t['begin_at']) ? date('Y-m-d', strtotime($t['begin_at'])) : null,
+                    'end_date'          => isset($t['end_at']) ? date('Y-m-d', strtotime($t['end_at'])) : null,
+                    'prize_pool'        => $t['prizepool'] ?? null,
+                    'status'            => $this->mapStatus($t),
+                    'approval_status'   => 'approved',  // PandaScore events are auto-approved
                 ]
             );
             $count++;
         }
 
-        $this->info("  {$count} tournaments synced");
+        $this->info("  {$count} tournaments synced (auto-approved)");
     }
 
     private function syncMatches(PandaScoreService $service): void
@@ -261,12 +318,11 @@ class SyncPandaScore extends Command
 
             if (!$teamA || !$teamB || !$event) continue;
 
-            // FIX: Use status from API, fallback to 'scheduled'
             $status = match ($m['status'] ?? 'not_started') {
                 'running'  => 'live',
                 'finished' => 'completed',
                 'canceled' => 'cancelled',
-                default    => 'scheduled',  // Default to scheduled
+                default    => 'scheduled',
             };
 
             $match = Matches::updateOrCreate(
@@ -275,13 +331,12 @@ class SyncPandaScore extends Command
                     'event_id'     => $event->id,
                     'team_a_id'    => $teamA->id,
                     'team_b_id'    => $teamB->id,
-                    'scheduled_at' => isset($m['scheduled_at']) ? \Carbon\Carbon::parse($m['scheduled_at'])->format('Y-m-d H:i:s') : null,
-                    'status'       => $status,  // FIX: Only use valid enum values
-                    'stage'        => $m['name'] ?? null,  // Use 'name' for stage, not status
+                    'scheduled_at' => isset($m['scheduled_at']) ? Carbon::parse($m['scheduled_at'])->format('Y-m-d H:i:s') : null,
+                    'status'       => $status,
+                    'stage'        => $m['name'] ?? null,
                 ]
             );
 
-            // Save result if match is completed
             if ($status === 'completed' && isset($m['results'])) {
                 $winnerId = null;
                 if (isset($m['winner']['id'])) {
@@ -323,8 +378,8 @@ class SyncPandaScore extends Command
     private function mapStatus(array $tournament): string
     {
         $now   = now();
-        $begin = isset($tournament['begin_at']) ? \Carbon\Carbon::parse($tournament['begin_at']) : null;
-        $end   = isset($tournament['end_at'])   ? \Carbon\Carbon::parse($tournament['end_at'])   : null;
+        $begin = isset($tournament['begin_at']) ? Carbon::parse($tournament['begin_at']) : null;
+        $end   = isset($tournament['end_at'])   ? Carbon::parse($tournament['end_at'])   : null;
 
         if ($end && $now->greaterThan($end)) return 'completed';
         if ($begin && $now->lessThan($begin)) return 'upcoming';

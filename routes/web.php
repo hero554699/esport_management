@@ -24,6 +24,7 @@ Route::get('/teams', [TeamsController::class, 'index'])->name('teams.index');
 Route::get('/players', [PlayersController::class, 'index'])->name('players.index');
 Route::get('/games', [GamesController::class, 'index'])->name('games.index');
 Route::get('/organizations', [OrganizationsController::class, 'index'])->name('organizations.index');
+Route::get('/organizations/{organization:slug}', [OrganizationsController::class, 'show'])->name('organizations.show');
 Route::get('/matches', [MatchesPublicController::class, 'index'])->name('matches.index');
 
 // User dashboard
