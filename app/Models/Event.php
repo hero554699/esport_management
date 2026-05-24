@@ -10,16 +10,14 @@ class Event extends Model
         'pandascore_id',
         'game_id',
         'user_id',
-        'team_a_id',
-        'team_b_id',
         'name',
         'slug',
         'status',
         'type',
-        'start_date',
-        'end_date',
         'prize_pool',
         'banner_url',
+        'certification_path',
+        'is_certification_public',
         'approval_status',
         'rejection_reason',
     ];
@@ -27,8 +25,7 @@ class Event extends Model
     protected function casts(): array
     {
         return [
-            'start_date' => 'datetime',
-            'end_date' => 'datetime',
+            'is_certification_public' => 'boolean',
         ];
     }
 
@@ -42,18 +39,24 @@ class Event extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function teamA()
-    {
-        return $this->belongsTo(Team::class, 'team_a_id');
-    }
-
-    public function teamB()
-    {
-        return $this->belongsTo(Team::class, 'team_b_id');
-    }
-
     public function matches()
     {
         return $this->hasMany(Matches::class);
+    }
+
+    /**
+     * Check if tournament requires certification
+     */
+    public function requiresCertification(): bool
+    {
+        return in_array($this->type, ['national', 'international', 'world']);
+    }
+
+    /**
+     * Check if certification is visible
+     */
+    public function hasCertification(): bool
+    {
+        return !empty($this->certification_path);
     }
 }

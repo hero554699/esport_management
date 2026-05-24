@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\User;
 
-use App\Models\Team;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -20,30 +19,35 @@ class UpdateEventRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255', Rule::unique('events', 'name')->ignore($event?->id)],
             'game_id' => ['required', 'exists:games,id'],
-            'team_a_id' => ['required', 'exists:teams,id', 'different:team_b_id'],
-            'team_b_id' => ['required', 'exists:teams,id'],
-            'start_date' => ['required', 'date', 'after_or_equal:today'],
-            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
-            'prize_pool' => ['nullable', 'string'],
             'type' => ['required', 'in:local,national,international,world'],
+            'prize_pool' => ['nullable', 'string', 'max:255'],
+            'certification' => $this->getCertificationRules(),
+            'is_certification_public' => ['nullable', 'boolean'],
         ];
     }
 
-    public function withValidator($validator): void
+    public function messages(): array
     {
-        $validator->after(function ($validator) {
-            $teamIds = array_filter([$this->input('team_a_id'), $this->input('team_b_id')]);
-            if (empty($teamIds)) {
-                return;
-            }
+        return [
+            'certification.required' => 'Certification is required for ' . $this->input('type') . ' tournaments.',
+            'certification.file' => 'Certification must be a file (PDF, image, etc).',
+            'certification.max' => 'Certification file must not exceed 5MB.',
+        ];
+    }
 
-            $ownedCount = Team::whereIn('id', $teamIds)
-                ->where('user_id', $this->user()->id)
-                ->count();
+    /**
+     * Get certification validation rules based on tournament type
+     */
+    private function getCertificationRules(): array
+    {
+        $type = $this->input('type');
 
-            if ($ownedCount !== count($teamIds)) {
-                $validator->errors()->add('team_a_id', 'You can only select your own teams.');
-            }
-        });
+        // Local tournaments don't need certification
+        if ($type === 'local') {
+            return ['nullable', 'file'];
+        }
+
+        // National, International, World need certification
+        return ['required', 'file', 'mimes:pdf,jpg,jpeg,png,gif,doc,docx', 'max:5120'];
     }
 }
