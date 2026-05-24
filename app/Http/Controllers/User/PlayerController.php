@@ -35,7 +35,7 @@ class PlayerController extends Controller
 
         Player::create($validated);
 
-        return redirect()->route('user.teams.players.index', $team)
+        return redirect()->route('user.teams.show', $team)
             ->with('success', 'Player added successfully!');
     }
 
@@ -63,7 +63,7 @@ class PlayerController extends Controller
 
         $player->update($request->validated());
 
-        return redirect()->route('user.teams.players.index', $team)
+        return redirect()->route('user.teams.show', $team)
             ->with('success', 'Player updated successfully!');
     }
 
@@ -74,7 +74,7 @@ class PlayerController extends Controller
 
         $player->delete();
 
-        return redirect()->route('user.teams.players.index', $team)
+        return redirect()->route('user.teams.show', $team)
             ->with('success', 'Player removed.');
     }
 }
