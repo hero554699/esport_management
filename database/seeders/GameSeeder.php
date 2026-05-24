@@ -9,23 +9,16 @@ class GameSeeder extends Seeder
 {
     public function run(): void
     {
+        // Only seed basic games - PandaScore will add more via sync
         $games = [
-            ['name' => 'Counter-Strike 2',        'slug' => 'cs2',         'platform' => 'pc',     'is_active' => true],
-            ['name' => 'Valorant',                 'slug' => 'valorant',    'platform' => 'pc',     'is_active' => true],
-            ['name' => 'Dota 2',                   'slug' => 'dota2',       'platform' => 'pc',     'is_active' => true],
-            ['name' => 'League of Legends',        'slug' => 'lol',         'platform' => 'pc',     'is_active' => true],
-            ['name' => 'Apex Legends',             'slug' => 'apex',        'platform' => 'pc',     'is_active' => true],
-            ['name' => 'Rocket League',            'slug' => 'rl',          'platform' => 'pc',     'is_active' => true],
-            ['name' => 'Overwatch 2',              'slug' => 'ow2',         'platform' => 'pc',     'is_active' => true],
-            ['name' => 'Mobile Legends Bang Bang', 'slug' => 'mlbb',        'platform' => 'mobile', 'is_active' => true],
-            ['name' => 'PUBG Mobile',              'slug' => 'pubgm',       'platform' => 'mobile', 'is_active' => true],
-            ['name' => 'Wild Rift',                'slug' => 'wildrift',    'platform' => 'mobile', 'is_active' => true],
-            ['name' => 'Call of Duty Mobile',      'slug' => 'codm',        'platform' => 'mobile', 'is_active' => true],
-            ['name' => 'Free Fire',                'slug' => 'freefire',    'platform' => 'mobile', 'is_active' => true],
+            ['name' => 'Counter Strike 2', 'slug' => 'cs2', 'platform' => 'pc', 'is_active' => true],
+            ['name' => 'VALORANT', 'slug' => 'valorant', 'platform' => 'pc', 'is_active' => true],
+            ['name' => 'League of Legends', 'slug' => 'lol', 'platform' => 'pc', 'is_active' => true],
+            ['name' => 'Mobile Legends', 'slug' => 'ml', 'platform' => 'mobile', 'is_active' => true],
         ];
 
         foreach ($games as $game) {
-            Game::create($game);
+            Game::firstOrCreate(['name' => $game['name']], $game);
         }
     }
 }

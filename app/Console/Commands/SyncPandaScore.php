@@ -63,8 +63,8 @@ class SyncPandaScore extends Command
             $slug = $g['slug'] ?? Str::slug($g['name']);
 
             $existing = Game::where('slug', $slug)
-                            ->whereNull('pandascore_id')
-                            ->first();
+                ->whereNull('pandascore_id')
+                ->first();
 
             if ($existing) {
                 $existing->update([
@@ -188,8 +188,8 @@ class SyncPandaScore extends Command
             $slug = $t['slug'] ?? Str::slug($t['name']);
 
             $slugExists = Event::where('slug', $slug)
-                               ->whereNull('pandascore_id')
-                               ->first();
+                ->whereNull('pandascore_id')
+                ->first();
 
             if ($slugExists) {
                 $slugExists->update([
@@ -261,10 +261,12 @@ class SyncPandaScore extends Command
 
             if (!$teamA || !$teamB || !$event) continue;
 
-            $status = match($m['status'] ?? 'not_started') {
+            // FIX: Use status from API, fallback to 'scheduled'
+            $status = match ($m['status'] ?? 'not_started') {
                 'running'  => 'live',
                 'finished' => 'completed',
-                default    => 'upcoming',
+                'canceled' => 'cancelled',
+                default    => 'scheduled',  // Default to scheduled
             };
 
             $match = Matches::updateOrCreate(
@@ -273,14 +275,14 @@ class SyncPandaScore extends Command
                     'event_id'     => $event->id,
                     'team_a_id'    => $teamA->id,
                     'team_b_id'    => $teamB->id,
-                    'scheduled_at' => $m['scheduled_at'] ?? null,
-                    'status'       => $status,
-                    'stage'        => $m['name'] ?? null,
+                    'scheduled_at' => isset($m['scheduled_at']) ? \Carbon\Carbon::parse($m['scheduled_at'])->format('Y-m-d H:i:s') : null,
+                    'status'       => $status,  // FIX: Only use valid enum values
+                    'stage'        => $m['name'] ?? null,  // Use 'name' for stage, not status
                 ]
             );
 
             // Save result if match is completed
-            if ($status === 'completed') {
+            if ($status === 'completed' && isset($m['results'])) {
                 $winnerId = null;
                 if (isset($m['winner']['id'])) {
                     $winnerTeam = Team::where('pandascore_id', (string) $m['winner']['id'])->first();
