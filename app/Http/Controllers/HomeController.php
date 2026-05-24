@@ -42,11 +42,13 @@ class HomeController extends Controller
             ->get();
 
         $liveMatches = Matches::where('status', 'live')
+            ->whereHas('event', fn($q) => $q->where('approval_status', 'approved'))
             ->with('teamA', 'teamB', 'event.game')
             ->take(4)
             ->get();
 
         $recentMatches = Matches::where('status', 'completed')
+            ->whereHas('event', fn($q) => $q->where('approval_status', 'approved'))
             ->with('teamA', 'teamB', 'event.game', 'result')
             ->orderByDesc('scheduled_at')
             ->take(5)

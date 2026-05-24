@@ -14,6 +14,7 @@ class MatchesPublicController extends Controller
         $search = request('search');
 
         $matches = Matches::with('teamA', 'teamB', 'event.game', 'result')
+            ->whereHas('event', fn($q) => $q->where('approval_status', 'approved'))
             ->when($status, fn($q) => $q->where('status', $status))
             ->when($gameId, fn($q) => $q->whereHas('event', fn($q) => $q->where('game_id', $gameId)))
             ->when($search, fn($q) => $q->whereHas('teamA', fn($q) => $q->where('name', 'like', "%{$search}%"))

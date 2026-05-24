@@ -37,6 +37,9 @@
     <!-- Management Actions -->
     <div class="max-w-7xl mx-auto px-4 py-6">
         <div class="flex gap-4 flex-wrap mb-8">
+            <a href="{{ route('admin.events.create') }}" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl transition">
+                Create Event
+            </a>
             <a href="{{ route('admin.games.index') }}" class="border border-gray-700 hover:border-orange-500 text-white px-6 py-3 rounded-xl transition">
                 Manage Games
             </a>
@@ -78,7 +81,9 @@
                     </div>
                     <div>
                         <p class="text-gray-400">Start Date</p>
-                        <p class="text-white font-semibold">{{ $event->start_date?->format('M d, Y') }}</p>
+                        <p class="text-white font-semibold">
+                            {{ $event->start_date ? \Illuminate\Support\Carbon::parse($event->start_date)->format('M d, Y') : '—' }}
+                        </p>
                     </div>
                     <div>
                         <p class="text-gray-400">Prize Pool</p>
@@ -126,7 +131,9 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h3 class="text-lg font-bold text-white">{{ $event->name }}</h3>
-                    <p class="text-gray-400 text-sm">{{ $event->game?->name }} • {{ $event->start_date?->format('M d, Y') }}</p>
+                    <p class="text-gray-400 text-sm">
+                        {{ $event->game?->name }} • {{ $event->start_date ? \Illuminate\Support\Carbon::parse($event->start_date)->format('M d, Y') : '—' }}
+                    </p>
                 </div>
                 <span class="bg-green-500/20 text-green-400 text-xs px-3 py-1 rounded-full">APPROVED</span>
             </div>

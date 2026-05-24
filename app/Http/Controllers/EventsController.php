@@ -30,6 +30,7 @@ class EventsController extends Controller
 
     public function show(Event $event)
     {
+        abort_unless($event->approval_status === 'approved', 404);
         $event->load('game', 'matches.teamA', 'matches.teamB', 'matches.result');
         return view('public.events.show', compact('event'));
     }
