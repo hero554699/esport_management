@@ -11,17 +11,16 @@ return new class extends Migration
         Schema::create('players', function (Blueprint $table) {
             $table->id();
             $table->string('pandascore_id')->nullable()->unique();
-            $table->foreignId('team_id')->nullable()->constrained()->nullOnDelete();
-            $table->string('nickname')->nullable();
-            $table->string('username')->nullable();
-            $table->string('first_name')->nullable();
-            $table->string('last_name')->nullable();
-            $table->string('real_name')->nullable();
-            $table->string('nationality', 60)->nullable();
-            $table->string('country', 60)->nullable();
-            $table->string('avatar_url')->nullable();
-            $table->string('role')->nullable();
+            $table->unsignedBigInteger('team_id')->nullable();
+            $table->string('name');
+            $table->string('username')->unique();
+            $table->string('country')->nullable();
             $table->timestamps();
+        });
+
+        // Add foreign key
+        Schema::table('players', function (Blueprint $table) {
+            $table->foreign('team_id')->references('id')->on('teams')->cascadeOnDelete();
         });
     }
 

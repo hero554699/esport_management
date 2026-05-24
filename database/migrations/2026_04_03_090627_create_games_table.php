@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('games', function (Blueprint $table) {
             $table->id();
             $table->string('pandascore_id')->nullable()->unique();
-            $table->string('name');
+            $table->string('name')->unique();
             $table->string('slug')->unique();
             $table->enum('platform', ['pc', 'mobile', 'console'])->default('pc');
             $table->string('logo_url')->nullable();

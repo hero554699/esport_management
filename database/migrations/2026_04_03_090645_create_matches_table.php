@@ -11,14 +11,18 @@ return new class extends Migration
         Schema::create('matches', function (Blueprint $table) {
             $table->id();
             $table->string('pandascore_id')->nullable()->unique();
-            $table->foreignId('event_id')->constrained()->cascadeOnDelete();
-            $table->unsignedBigInteger('team_a_id');
-            $table->unsignedBigInteger('team_b_id');
+            $table->unsignedBigInteger('event_id')->nullable();
+            $table->unsignedBigInteger('team_a_id')->nullable();
+            $table->unsignedBigInteger('team_b_id')->nullable();
             $table->string('stage')->nullable();
-            $table->enum('status', ['upcoming', 'live', 'completed'])->default('upcoming');
+            $table->enum('status', ['scheduled', 'live', 'completed', 'cancelled'])->default('scheduled');
             $table->dateTime('scheduled_at')->nullable();
             $table->timestamps();
+        });
 
+        // Add foreign keys
+        Schema::table('matches', function (Blueprint $table) {
+            $table->foreign('event_id')->references('id')->on('events')->cascadeOnDelete();
             $table->foreign('team_a_id')->references('id')->on('teams')->cascadeOnDelete();
             $table->foreign('team_b_id')->references('id')->on('teams')->cascadeOnDelete();
         });

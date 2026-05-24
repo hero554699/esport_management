@@ -11,17 +11,24 @@ return new class extends Migration
         Schema::create('teams', function (Blueprint $table) {
             $table->id();
             $table->string('pandascore_id')->nullable()->unique();
-            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('game_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('organization_id')->nullable()->constrained()->nullOnDelete();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('game_id')->nullable();
+            $table->unsignedBigInteger('organization_id')->nullable();
             $table->string('name');
-            $table->string('slug')->nullable()->unique();
-            $table->string('acronym', 20)->nullable();
-            $table->string('tag', 10)->nullable();
+            $table->string('slug')->unique();
+            $table->string('acronym')->nullable();
+            $table->string('tag')->nullable();
             $table->string('logo_url')->nullable();
+            $table->string('country')->nullable();
             $table->string('location')->nullable();
-            $table->string('country', 60)->nullable();
             $table->timestamps();
+        });
+
+        // Add foreign keys
+        Schema::table('teams', function (Blueprint $table) {
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('game_id')->references('id')->on('games')->cascadeOnDelete();
+            $table->foreign('organization_id')->references('id')->on('organizations')->cascadeOnDelete();
         });
     }
 

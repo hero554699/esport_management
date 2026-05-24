@@ -10,15 +10,17 @@ return new class extends Migration
     {
         Schema::create('results', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('match_id')->unique()->constrained('matches')->cascadeOnDelete();
+            $table->unsignedBigInteger('match_id')->nullable();
             $table->unsignedBigInteger('winner_team_id')->nullable();
             $table->integer('score_a')->nullable();
             $table->integer('score_b')->nullable();
-            $table->string('mvp_player')->nullable();
-            $table->text('notes')->nullable();
             $table->timestamps();
+        });
 
-            $table->foreign('winner_team_id')->references('id')->on('teams')->nullOnDelete();
+        // Add foreign keys
+        Schema::table('results', function (Blueprint $table) {
+            $table->foreign('match_id')->references('id')->on('matches')->cascadeOnDelete();
+            $table->foreign('winner_team_id')->references('id')->on('teams')->cascadeOnDelete();
         });
     }
 
