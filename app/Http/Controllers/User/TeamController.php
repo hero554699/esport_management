@@ -70,7 +70,16 @@ class TeamController extends Controller
     {
         $this->authorize('update', $team);
 
-        $team->update($request->validated());
+        $validated = $request->validated();
+
+        if ($request->hasFile('logo_file')) {
+            $path = $request->file('logo_file')->store('logos', 'public');
+            $validated['logo_url'] = asset('storage/' . $path);
+        }
+
+        unset($validated['logo_file']);
+
+        $team->update($validated);
 
         return redirect()->route('user.teams.index')
             ->with('success', 'Team updated successfully!');

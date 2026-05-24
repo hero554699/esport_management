@@ -138,7 +138,12 @@
 
     <!-- Teams -->
     <div class="max-w-7xl mx-auto px-4 py-8 border-t border-gray-800">
-        <h2 class="text-2xl font-bold text-white mb-6">My Teams</h2>
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-white">My Teams</h2>
+            <a href="{{ route('user.teams.create') }}" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded-lg transition text-sm">
+                + Create Team
+            </a>
+        </div>
 
         @forelse($myTeams as $team)
         <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 mb-4 hover:border-orange-500/50 transition">
