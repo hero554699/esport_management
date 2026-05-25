@@ -13,6 +13,7 @@ use App\Policies\PlayerPolicy;
 use App\Policies\ResultPolicy;
 use App\Policies\TeamPolicy;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -30,6 +31,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Force HTTPS in production (required for Render)
+        if (env('APP_ENV') === 'production') {
+            URL::forceScheme('https');
+        }
+
+        //  Register authorization policies
         Gate::policy(Event::class, EventPolicy::class);
         Gate::policy(Team::class, TeamPolicy::class);
         Gate::policy(Player::class, PlayerPolicy::class);
