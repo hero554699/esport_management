@@ -4,12 +4,13 @@
 @section('content')
 <div class="min-h-screen bg-gray-900">
     <div class="max-w-2xl mx-auto px-4 py-12">
-        <a href="{{ route('user.events.matches.index', $event) }}"
+
+        <a href="{{ route('user.events.show', $event) }}"
             class="inline-flex items-center gap-1.5 text-gray-400 hover:text-orange-500 transition mb-5 text-sm">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
-            Back to Matches
+            Back to Tournament
         </a>
 
         <h1 class="text-2xl font-medium text-white mb-1">Edit Match</h1>

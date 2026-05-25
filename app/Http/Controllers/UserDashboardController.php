@@ -35,8 +35,10 @@ class UserDashboardController extends Controller
             // Total teams count
             $totalTeams = Team::where('user_id', $user->id)->count();
 
-            // Count statistics
-            $allEvents = Event::where('user_id', $user->id)->get();
+            // Count statistics - Load ALL events with matches count for stats
+            $allEvents = Event::where('user_id', $user->id)
+                ->withCount('matches')
+                ->get();
 
             $stats = [
                 'tournaments' => $allEvents->count(),

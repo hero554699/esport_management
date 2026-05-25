@@ -19,7 +19,6 @@
                 <p class="text-xs text-gray-500">{{ $match->stage }} • {{ strtoupper($match->status) }} • {{ optional($match->scheduled_at)->format('M d, Y H:i') }}</p>
             </div>
             <div class="flex gap-3 text-sm">
-                <a href="{{ route('user.events.matches.show', [$event, $match]) }}" class="text-blue-400">View</a>
                 <a href="{{ route('user.events.matches.edit', [$event, $match]) }}" class="text-orange-400">Edit</a>
                 <a href="{{ route('user.matches.results.index', $match) }}" class="text-green-400">Results</a>
                 <form method="POST" action="{{ route('user.events.matches.destroy', [$event, $match]) }}" onsubmit="return confirm('Delete match?')">

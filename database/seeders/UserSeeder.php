@@ -10,18 +10,23 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
-            'name'     => 'Admin',
-            'email'    => 'admin@esports.com',
-            'password' => Hash::make('password'),
-            'role'     => 'admin',
-        ]);
+        // Use updateOrCreate to avoid duplicates
+        User::updateOrCreate(
+            ['email' => 'admin@esports.com'],
+            [
+                'name'     => 'Admin',
+                'password' => Hash::make('password'),
+                'role'     => 'admin',
+            ]
+        );
 
-        User::create([
-            'name'     => 'Viewer',
-            'email'    => 'viewer@esports.com',
-            'password' => Hash::make('password'),
-            'role'     => 'viewer',
-        ]);
+        User::updateOrCreate(
+            ['email' => 'viewer@esports.com'],
+            [
+                'name'     => 'Viewer',
+                'password' => Hash::make('password'),
+                'role'     => 'viewer',
+            ]
+        );
     }
 }
