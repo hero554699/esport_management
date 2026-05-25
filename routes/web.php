@@ -55,7 +55,6 @@ Route::prefix('admin')
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::resource('events', EventController::class);
         Route::resource('teams', TeamController::class);
-        Route::get('teams/{team}/show', [TeamController::class, 'show'])->name('teams.show');
         Route::resource('players', PlayerController::class);
         Route::resource('matches', MatchesController::class);
         Route::resource('results', AdminResultController::class);
