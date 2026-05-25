@@ -15,33 +15,51 @@ class UserDashboardController extends Controller
         try {
             $user = Auth::user();
 
-            // User's tournaments
+            // User's tournaments (limit to 5 for dashboard)
             $myEvents = Event::where('user_id', $user->id)
                 ->withCount('matches')
                 ->orderBy('created_at', 'desc')
+                ->limit(5)
                 ->get();
 
-            // User's teams
+            // Total tournaments count
+            $totalEvents = Event::where('user_id', $user->id)->count();
+
+            // User's teams (limit to 5 for dashboard)
             $myTeams = Team::where('user_id', $user->id)
                 ->withCount('players')
                 ->orderBy('created_at', 'desc')
+                ->limit(5)
                 ->get();
 
+            // Total teams count
+            $totalTeams = Team::where('user_id', $user->id)->count();
+
             // Count statistics
+            $allEvents = Event::where('user_id', $user->id)->get();
+
             $stats = [
-                'tournaments' => $myEvents->count(),
-                'pending' => $myEvents->where('approval_status', 'pending')->count(),
-                'approved' => $myEvents->where('approval_status', 'approved')->count(),
-                'rejected' => $myEvents->where('approval_status', 'rejected')->count(),
-                'teams' => $myTeams->count(),
+                'tournaments' => $allEvents->count(),
+                'pending' => $allEvents->where('approval_status', 'pending')->count(),
+                'approved' => $allEvents->where('approval_status', 'approved')->count(),
+                'rejected' => $allEvents->where('approval_status', 'rejected')->count(),
+                'teams' => Team::where('user_id', $user->id)->count(),
                 'players' => Player::whereHas('team', fn($q) => $q->where('user_id', $user->id))->count(),
-                'matches' => $myEvents->sum('matches_count'),
+                'matches' => $allEvents->sum('matches_count'),
             ];
 
             // Recent notifications
-            $recentRejections = $myEvents->where('approval_status', 'rejected');
+            $recentRejections = $allEvents->where('approval_status', 'rejected');
 
-            return view('user.dashboard', compact('user', 'myEvents', 'myTeams', 'stats', 'recentRejections'));
+            return view('user.dashboard', compact(
+                'user',
+                'myEvents',
+                'myTeams',
+                'stats',
+                'recentRejections',
+                'totalEvents',
+                'totalTeams'
+            ));
         } catch (\Exception $e) {
             Log::error('Error loading user dashboard: ' . $e->getMessage());
             return redirect()->route('home')->with('error', 'Unable to load dashboard.');

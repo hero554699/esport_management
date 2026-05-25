@@ -55,20 +55,39 @@
         {{-- Tournaments Section --}}
         <div>
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-medium text-white">My Tournaments</h2>
-                <a href="{{ route('user.events.create') }}"
-                    class="relative overflow-hidden bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition btn-shine">
-                    + Create Tournament
-                </a>
+                <div>
+                    <h2 class="text-lg font-medium text-white">My Tournaments</h2>
+                    @if($totalEvents > 5)
+                    <p class="text-gray-400 text-xs mt-1">Showing 5 of {{ $totalEvents }} tournaments</p>
+                    @endif
+                </div>
+                <div class="flex items-center gap-3">
+                    @if($totalEvents > 5)
+                    <a href="{{ route('user.events.index') }}"
+                        class="border border-gray-700 hover:border-orange-500 text-gray-300 hover:text-orange-500 text-sm font-medium px-4 py-2.5 rounded-lg transition">
+                        iew All ({{ $totalEvents }})
+                    </a>
+                    @else
+                    <a href="{{ route('user.events.index') }}"
+                        class="border border-gray-700 hover:border-orange-500 text-gray-300 hover:text-orange-500 text-sm font-medium px-4 py-2.5 rounded-lg transition">
+                        Manage Tournaments
+                    </a>
+                    @endif
+                    <a href="{{ route('user.events.create') }}"
+                        class="relative overflow-hidden bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition btn-shine">
+                        + Create Tournament
+                    </a>
+                </div>
             </div>
 
             @forelse($myEvents as $event)
-            <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 mb-3 hover:border-orange-500/40 transition">
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 mb-3 hover:border-orange-500/40 transition cursor-pointer group"
+                onclick="window.location.href='{{ route('user.events.show', $event) }}'">
 
                 {{-- Title row --}}
                 <div class="flex items-start justify-between mb-4">
                     <div class="flex items-center gap-2 flex-wrap">
-                        <h3 class="text-base font-medium text-white">{{ ucwords($event->name) }}</h3>
+                        <h3 class="text-base font-medium text-white group-hover:text-orange-400 transition">{{ ucwords($event->name) }}</h3>
 
                         @if($event->approval_status === 'pending')
                         <span class="bg-yellow-500/15 text-yellow-500 text-xs px-2.5 py-0.5 rounded-full font-medium">Pending</span>
@@ -87,11 +106,11 @@
                         @endif
                     </div>
 
-                    <div class="flex items-center gap-3 flex-shrink-0 ml-4">
+                    <div class="flex items-center gap-2 flex-shrink-0 ml-4" onclick="event.stopPropagation()">
                         @if($event->approval_status === 'approved')
-                        <a href="{{ route('user.events.show', $event) }}"
-                            class="text-orange-500 hover:text-orange-400 text-sm font-medium transition whitespace-nowrap">
-                            Manage →
+                        <a href="{{ route('user.events.matches.create', $event) }}"
+                            class="bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium px-3 py-1.5 rounded transition whitespace-nowrap">
+                            + Add Match
                         </a>
                         @endif
                         <a href="{{ route('user.events.edit', $event) }}"
@@ -133,12 +152,24 @@
         {{-- Teams Section --}}
         <div class="border-t border-gray-800 pt-8">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-medium text-white">My Teams</h2>
+                <div>
+                    <h2 class="text-lg font-medium text-white">My Teams</h2>
+                    @if($totalTeams > 5)
+                    <p class="text-gray-400 text-xs mt-1">Showing 5 of {{ $totalTeams }} teams</p>
+                    @endif
+                </div>
                 <div class="flex items-center gap-3">
+                    @if($totalTeams > 5)
+                    <a href="{{ route('user.teams.index') }}"
+                        class="border border-gray-700 hover:border-orange-500 text-gray-300 hover:text-orange-500 text-sm font-medium px-4 py-2.5 rounded-lg transition">
+                        View All ({{ $totalTeams }})
+                    </a>
+                    @else
                     <a href="{{ route('user.teams.index') }}"
                         class="border border-gray-700 hover:border-orange-500 text-gray-300 hover:text-orange-500 text-sm font-medium px-4 py-2.5 rounded-lg transition">
                         Manage Teams
                     </a>
+                    @endif
                     <a href="{{ route('user.teams.create') }}"
                         class="relative overflow-hidden bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition btn-shine">
                         + Create Team

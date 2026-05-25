@@ -14,10 +14,10 @@ class EventController extends Controller
 {
     public function index()
     {
-        $events = Event::with('game', 'user', 'teamA', 'teamB')
+        $events = Event::with('game', 'user')
             ->whereNull('pandascore_id')
             ->orderByRaw("FIELD(approval_status, 'pending', 'approved', 'rejected')")
-            ->orderBy('start_date', 'desc')
+            ->orderBy('created_at', 'desc')
             ->get();
 
         $pendingCount = $events->where('approval_status', 'pending')
@@ -25,6 +25,14 @@ class EventController extends Controller
             ->count();
 
         return view('admin.events.index', compact('events', 'pendingCount'));
+    }
+
+    public function show(Event $event)
+    {
+        $event->load(['game', 'user']);
+        $matches = $event->matches()->with(['teamA', 'teamB', 'result'])->latest('scheduled_at')->get();
+
+        return view('admin.events.show', compact('event', 'matches'));
     }
 
     public function create()

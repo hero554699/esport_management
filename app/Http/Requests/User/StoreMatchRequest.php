@@ -14,12 +14,18 @@ class StoreMatchRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'event_id' => ['nullable', 'exists:events,id'],
             'team_a_id' => ['required', 'exists:teams,id', 'different:team_b_id'],
             'team_b_id' => ['required', 'exists:teams,id'],
             'stage' => ['required', 'string', 'max:100'],
-            'status' => ['required', 'in:scheduled,live,completed,cancelled'],
-            'scheduled_at' => ['required', 'date'],
+            'scheduled_at' => ['required', 'date', 'after_or_equal:now'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'scheduled_at.after_or_equal' => 'Match cannot be scheduled in the past. Please select a future date and time.',
+            'team_a_id.different' => 'Team A and Team B must be different.',
         ];
     }
 }

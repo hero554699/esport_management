@@ -7,7 +7,6 @@ use App\Http\Requests\User\StoreEventRequest;
 use App\Http\Requests\User\UpdateEventRequest;
 use App\Models\Event;
 use App\Models\Game;
-use App\Models\Team;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -44,8 +43,8 @@ class EventController extends Controller
         // Handle certification file upload
         if ($request->hasFile('certification')) {
             $file = $request->file('certification');
-            $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('tournaments/certifications', $filename, 'public');
+            $originalName = $file->getClientOriginalName();
+            $path = $file->storeAs('tournaments/certifications', $originalName, 'public');
             $validated['certification_path'] = $path;
         }
 
@@ -59,9 +58,10 @@ class EventController extends Controller
     {
         $this->authorize('view', $event);
 
-        $event->load(['matches.teamA', 'matches.teamB', 'matches.result', 'game']);
+        $event->load(['game']);
+        $matches = $event->matches()->with(['teamA', 'teamB', 'result'])->latest('scheduled_at')->get();
 
-        return view('user.events.show', compact('event'));
+        return view('user.events.show', compact('event', 'matches'));
     }
 
     public function edit(Event $event)
@@ -88,8 +88,8 @@ class EventController extends Controller
             }
 
             $file = $request->file('certification');
-            $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('tournaments/certifications', $filename, 'public');
+            $originalName = $file->getClientOriginalName();
+            $path = $file->storeAs('tournaments/certifications', $originalName, 'public');
             $validated['certification_path'] = $path;
         }
 

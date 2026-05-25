@@ -7,6 +7,8 @@ use App\Http\Requests\User\StoreMatchRequest;
 use App\Http\Requests\User\UpdateMatchRequest;
 use App\Models\Event;
 use App\Models\Matches;
+use App\Models\Team;
+use Illuminate\Support\Facades\Auth;
 
 class MatchController extends Controller
 {
@@ -23,9 +25,13 @@ class MatchController extends Controller
     {
         $this->authorize('create', [Matches::class, $event]);
 
-        $event->load(['teamA', 'teamB']);
+        // Get only teams from the same game as the tournament
+        $teams = Team::where('game_id', $event->game_id)
+            ->where('user_id', Auth::id())
+            ->orderBy('name')
+            ->get();
 
-        return view('user.matches.create', compact('event'));
+        return view('user.matches.create', compact('event', 'teams'));
     }
 
     public function store(StoreMatchRequest $request, Event $event)
@@ -34,18 +40,28 @@ class MatchController extends Controller
 
         $validated = $request->validated();
 
-        if (!in_array((int) $validated['team_a_id'], [(int) $event->team_a_id, (int) $event->team_b_id], true)
-            || !in_array((int) $validated['team_b_id'], [(int) $event->team_a_id, (int) $event->team_b_id], true)) {
-            return back()->withErrors(['team_a_id' => 'Match teams must belong to the selected tournament teams.'])->withInput();
+        // Verify both teams belong to the same game as tournament
+        $teamAValid = Team::where('id', $validated['team_a_id'])
+            ->where('game_id', $event->game_id)
+            ->where('user_id', Auth::id())
+            ->exists();
+
+        $teamBValid = Team::where('id', $validated['team_b_id'])
+            ->where('game_id', $event->game_id)
+            ->where('user_id', Auth::id())
+            ->exists();
+
+        if (!$teamAValid || !$teamBValid) {
+            return back()->withErrors(['team_a_id' => 'Both teams must be from the same game as this tournament.'])->withInput();
         }
 
         $validated['event_id'] = $event->id;
-        $validated['status'] = $validated['status'] ?? 'scheduled';
+        $validated['status'] = 'scheduled';
 
         Matches::create($validated);
 
         return redirect()->route('user.events.matches.index', $event)
-            ->with('success', 'Match scheduled!');
+            ->with('success', 'Match scheduled successfully!');
     }
 
     public function show(Event $event, Matches $match)
@@ -64,9 +80,13 @@ class MatchController extends Controller
         $this->authorize('update', $match);
         abort_if($match->event_id !== $event->id, 404);
 
-        $event->load(['teamA', 'teamB']);
+        // Get only teams from the same game as the tournament
+        $teams = Team::where('game_id', $event->game_id)
+            ->where('user_id', Auth::id())
+            ->orderBy('name')
+            ->get();
 
-        return view('user.matches.edit', compact('event', 'match'));
+        return view('user.matches.edit', compact('event', 'match', 'teams'));
     }
 
     public function update(UpdateMatchRequest $request, Event $event, Matches $match)
@@ -76,9 +96,19 @@ class MatchController extends Controller
 
         $validated = $request->validated();
 
-        if (!in_array((int) $validated['team_a_id'], [(int) $event->team_a_id, (int) $event->team_b_id], true)
-            || !in_array((int) $validated['team_b_id'], [(int) $event->team_a_id, (int) $event->team_b_id], true)) {
-            return back()->withErrors(['team_a_id' => 'Match teams must belong to the selected tournament teams.'])->withInput();
+        // Verify both teams belong to the same game as tournament
+        $teamAValid = Team::where('id', $validated['team_a_id'])
+            ->where('game_id', $event->game_id)
+            ->where('user_id', Auth::id())
+            ->exists();
+
+        $teamBValid = Team::where('id', $validated['team_b_id'])
+            ->where('game_id', $event->game_id)
+            ->where('user_id', Auth::id())
+            ->exists();
+
+        if (!$teamAValid || !$teamBValid) {
+            return back()->withErrors(['team_a_id' => 'Both teams must be from the same game as this tournament.'])->withInput();
         }
 
         $match->update($validated);
@@ -95,6 +125,6 @@ class MatchController extends Controller
         $match->delete();
 
         return redirect()->route('user.events.matches.index', $event)
-            ->with('success', 'Match removed.');
+            ->with('success', 'Match deleted.');
     }
 }

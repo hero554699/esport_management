@@ -4,165 +4,162 @@
 
 @section('content')
 <div class="p-8">
-    <!-- Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 hover:border-orange-500/50 transition">
-            <p class="text-gray-400 text-sm mb-2">Pending Approvals</p>
-            <p class="text-3xl font-bold text-red-500">{{ $stats['pending_approvals'] }}</p>
+
+    {{-- Stats --}}
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-10">
+        <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 hover:border-orange-500/40 transition">
+            <p class="text-gray-400 text-xs mb-2">Pending Approvals</p>
+            <p class="text-2xl font-medium text-red-400">{{ $stats['pending_approvals'] }}</p>
             <p class="text-xs text-gray-600 mt-1">User submitted</p>
         </div>
-        <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 hover:border-orange-500/50 transition">
-            <p class="text-gray-400 text-sm mb-2">User Tournaments</p>
-            <p class="text-3xl font-bold text-blue-500">{{ $stats['user_events'] }}</p>
+        <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 hover:border-orange-500/40 transition">
+            <p class="text-gray-400 text-xs mb-2">User Tournaments</p>
+            <p class="text-2xl font-medium text-blue-400">{{ $stats['user_events'] }}</p>
             <p class="text-xs text-gray-600 mt-1">Community created</p>
         </div>
-        <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 hover:border-orange-500/50 transition">
-            <p class="text-gray-400 text-sm mb-2">PandaScore Tournaments</p>
-            <p class="text-3xl font-bold text-green-500">{{ $stats['pandascore_events'] }}</p>
+        <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 hover:border-orange-500/40 transition">
+            <p class="text-gray-400 text-xs mb-2">PandaScore Tournaments</p>
+            <p class="text-2xl font-medium text-green-400">{{ $stats['pandascore_events'] }}</p>
             <p class="text-xs text-gray-600 mt-1">Auto-approved</p>
         </div>
-        <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 hover:border-orange-500/50 transition">
-            <p class="text-gray-400 text-sm mb-2">All Players</p>
-            <p class="text-3xl font-bold text-orange-500">{{ $stats['players'] }}</p>
+        <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 hover:border-orange-500/40 transition">
+            <p class="text-gray-400 text-xs mb-2">All Players</p>
+            <p class="text-2xl font-medium text-orange-500">{{ $stats['players'] }}</p>
             <p class="text-xs text-gray-600 mt-1">From all sources</p>
         </div>
     </div>
 
-    <!-- Pending User Tournaments Section -->
-    <div class="mb-8">
-        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-            <span class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
-            Pending Tournament Approvals (User Submitted Only)
-        </h2>
+    {{-- Pending Approvals --}}
+    <div class="mb-10">
+        <div class="flex items-center gap-2 mb-5">
+            <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+            <h2 class="text-base font-medium text-white">Pending Tournament Approvals</h2>
+        </div>
 
         @forelse($pendingEvents as $event)
-        <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 mb-4 hover:border-orange-500/50 transition">
-            <div class="mb-4">
-                <div class="flex items-center justify-between mb-3">
-                    <div>
-                        <h3 class="text-xl font-bold text-white">{{ $event->name }}</h3>
-                        <p class="text-gray-400 text-sm mt-1">Submitted by: <strong>{{ $event->user?->name ?? 'Unknown' }}</strong></p>
-                    </div>
-                    <span class="bg-yellow-500/20 text-yellow-400 text-xs px-3 py-1 rounded-full">PENDING REVIEW</span>
-                </div>
+        <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 mb-3 hover:border-orange-500/40 transition">
 
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-4">
-                    <div>
-                        <p class="text-gray-400">Game</p>
-                        <p class="text-white font-semibold">{{ $event->game?->name }}</p>
-                    </div>
-                    <div>
-                        <p class="text-gray-400">Type</p>
-                        <p class="text-white font-semibold capitalize">{{ $event->type }}</p>
-                    </div>
-                    <div>
-                        <p class="text-gray-400">Start Date</p>
-                        <p class="text-white font-semibold">
-                            @if($event->start_date)
-                            {{ \Carbon\Carbon::parse($event->start_date)->format('M d, Y') }}
-                            @else
-                            N/A
-                            @endif
-                        </p>
-                    </div>
-                    <div>
-                        <p class="text-gray-400">Prize Pool</p>
-                        <p class="text-orange-500 font-semibold">{{ $event->prize_pool ?? '-' }}</p>
-                    </div>
+            {{-- Top row --}}
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <h3 class="text-sm font-medium text-white">{{ ucwords($event->name) }}</h3>
+                    <p class="text-xs text-gray-500 mt-1">Submitted by <span class="text-gray-400 font-medium">{{ $event->user?->name ?? 'Unknown' }}</span></p>
+                </div>
+                <span class="bg-yellow-500/12 text-yellow-500 text-xs px-2.5 py-0.5 rounded-full font-medium flex-shrink-0 ml-4">Pending review</span>
+            </div>
+
+            {{-- Divider --}}
+            <div class="border-t border-gray-700 mb-4"></div>
+
+            {{-- Meta --}}
+            <div class="grid grid-cols-3 divide-x divide-gray-700 mb-4">
+                <div class="pr-5">
+                    <p class="text-gray-500 text-xs mb-1">Game</p>
+                    <p class="text-white text-sm font-medium">{{ $event->game?->name ?? 'N/A' }}</p>
+                </div>
+                <div class="px-5">
+                    <p class="text-gray-500 text-xs mb-1">Type</p>
+                    <span class="bg-orange-500/10 text-orange-400 text-xs px-2.5 py-0.5 rounded-full font-medium">
+                        {{ ucfirst($event->type) }}
+                    </span>
+                </div>
+                <div class="pl-5">
+                    <p class="text-gray-500 text-xs mb-1">Prize Pool</p>
+                    <p class="text-orange-500 text-sm font-medium">{{ $event->prize_pool ?? '—' }}</p>
                 </div>
             </div>
 
-            <!-- Approval Actions -->
-            <div class="flex gap-3">
+            {{-- Actions --}}
+            <div class="flex gap-2">
                 <form action="{{ route('admin.events.approve', $event) }}" method="POST" class="inline">
                     @csrf
-                    <button type="submit" class="bg-green-500/20 hover:bg-green-500/30 text-green-400 font-semibold px-4 py-2 rounded-lg transition">
+                    <button type="submit"
+                        class="bg-green-500/12 hover:bg-green-500/20 text-green-400 border border-green-500/25 text-xs font-medium px-4 py-2 rounded-lg transition">
                         ✓ Approve
                     </button>
                 </form>
-
-                <button type="button" class="bg-red-500/20 hover:bg-red-500/30 text-red-400 font-semibold px-4 py-2 rounded-lg transition"
+                <button type="button"
+                    class="bg-red-500/12 hover:bg-red-500/20 text-red-400 border border-red-500/25 text-xs font-medium px-4 py-2 rounded-lg transition"
                     onclick="openRejectModal({{ $event->id }}, '{{ $event->name }}')">
                     ✗ Reject
                 </button>
-
-                <a href="{{ route('admin.events.edit', $event) }}" class="bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 font-semibold px-4 py-2 rounded-lg transition">
-                    View Details
-                </a>
             </div>
+
         </div>
         @empty
         <div class="text-center py-12 bg-gray-800 border border-gray-700 rounded-xl">
-            <p class="text-gray-400 text-lg">✓ No pending approvals</p>
-            <p class="text-gray-600 text-sm mt-1">All user tournaments are approved or rejected!</p>
+            <p class="text-gray-400 text-sm">✓ No pending approvals</p>
+            <p class="text-gray-600 text-xs mt-1">All user tournaments have been reviewed</p>
         </div>
         @endforelse
     </div>
 
-    <!-- Recently Approved (User) -->
-    <div class="mb-8">
-        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-            <span class="w-3 h-3 bg-green-500 rounded-full"></span>
-            Recently Approved (User Submitted)
-        </h2>
+    {{-- Recently Approved --}}
+    <div class="mb-10">
+        <div class="flex items-center gap-2 mb-5">
+            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+            <h2 class="text-base font-medium text-white">Recently Approved</h2>
+        </div>
 
         @forelse($recentApproved as $event)
-        <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 mb-4 hover:border-orange-500/50 transition">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h3 class="text-lg font-bold text-white">{{ $event->name }}</h3>
-                    <p class="text-gray-400 text-sm">
-                        {{ $event->game?->name }} •
-                        @if($event->start_date)
-                        {{ \Carbon\Carbon::parse($event->start_date)->format('M d, Y') }}
-                        @else
-                        N/A
-                        @endif
-                    </p>
-                </div>
-                <span class="bg-green-500/20 text-green-400 text-xs px-3 py-1 rounded-full">APPROVED</span>
+        <div class="bg-gray-800 border border-gray-700 rounded-xl px-5 py-4 mb-2 flex items-center justify-between hover:border-orange-500/40 transition">
+            <div>
+                <p class="text-sm font-medium text-white">{{ ucwords($event->name) }}</p>
+                <p class="text-xs text-gray-500 mt-0.5">
+                    {{ $event->game?->name ?? 'N/A' }}
+                    @if($event->start_date)
+                    · {{ \Carbon\Carbon::parse($event->start_date)->format('M d, Y') }}
+                    @endif
+                </p>
             </div>
+            <span class="bg-green-500/12 text-green-400 text-xs px-2.5 py-0.5 rounded-full font-medium flex-shrink-0 ml-4">Approved</span>
         </div>
         @empty
-        <p class="text-gray-400">No recently approved tournaments</p>
+        <p class="text-gray-600 text-sm">No recently approved tournaments</p>
         @endforelse
     </div>
 
-    <!-- Recently Rejected (User) -->
+    {{-- Recently Rejected --}}
     <div class="mb-8">
-        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-            <span class="w-3 h-3 bg-red-500 rounded-full"></span>
-            Recently Rejected (User Submitted)
-        </h2>
+        <div class="flex items-center gap-2 mb-5">
+            <span class="w-2 h-2 bg-gray-600 rounded-full"></span>
+            <h2 class="text-base font-medium text-white">Recently Rejected</h2>
+        </div>
 
         @forelse($recentRejected as $event)
-        <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 mb-4 hover:border-orange-500/50 transition">
+        <div class="bg-gray-800 border border-gray-700 rounded-xl px-5 py-4 mb-2 hover:border-orange-500/40 transition">
             <div class="flex items-center justify-between mb-2">
-                <h3 class="text-lg font-bold text-white">{{ $event->name }}</h3>
-                <span class="bg-red-500/20 text-red-400 text-xs px-3 py-1 rounded-full">REJECTED</span>
+                <p class="text-sm font-medium text-white">{{ ucwords($event->name) }}</p>
+                <span class="bg-red-500/12 text-red-400 text-xs px-2.5 py-0.5 rounded-full font-medium flex-shrink-0 ml-4">Rejected</span>
             </div>
-            <p class="text-red-300 text-sm"><strong>Reason:</strong> {{ $event->rejection_reason ?? 'No reason provided' }}</p>
+            <p class="text-xs text-red-300/80">
+                <span class="text-red-400 font-medium">Reason:</span>
+                {{ $event->rejection_reason ?? 'No reason provided' }}
+            </p>
         </div>
         @empty
-        <p class="text-gray-400">No recently rejected tournaments</p>
+        <p class="text-gray-600 text-sm">No recently rejected tournaments</p>
         @endforelse
     </div>
+
 </div>
 
-<!-- Reject Modal -->
-<div id="rejectModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+{{-- Reject Modal --}}
+<div id="rejectModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50">
     <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 max-w-md w-full mx-4">
-        <h3 class="text-xl font-bold text-white mb-4">Reject Tournament</h3>
+        <h3 class="text-base font-medium text-white mb-4">Reject Tournament</h3>
         <form id="rejectForm" method="POST">
             @csrf
             <textarea name="rejection_reason" placeholder="Enter rejection reason..."
-                class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white placeholder-gray-500 mb-4 focus:border-orange-500 outline-none"
+                class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white text-sm placeholder-gray-600 mb-4 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 focus:outline-none transition resize-none"
                 rows="4" required></textarea>
             <div class="flex gap-3">
-                <button type="submit" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-lg transition">
+                <button type="submit"
+                    class="flex-1 bg-red-500 hover:bg-red-600 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition">
                     Reject
                 </button>
-                <button type="button" onclick="closeRejectModal()" class="flex-1 border border-gray-600 text-white px-4 py-2 rounded-lg hover:border-gray-500 transition">
+                <button type="button" onclick="closeRejectModal()"
+                    class="flex-1 border border-gray-700 hover:border-gray-500 text-gray-300 text-sm font-medium px-4 py-2.5 rounded-lg transition">
                     Cancel
                 </button>
             </div>
@@ -172,8 +169,7 @@
 
 <script>
     function openRejectModal(eventId, eventName) {
-        const form = document.getElementById('rejectForm');
-        form.action = `/admin/events/${eventId}/reject`;
+        document.getElementById('rejectForm').action = `/admin/events/${eventId}/reject`;
         document.getElementById('rejectModal').classList.remove('hidden');
     }
 

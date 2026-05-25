@@ -40,12 +40,13 @@
 
         <div class="flex flex-col gap-3">
             @forelse($events as $event)
-            <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 hover:border-orange-500/40 transition">
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 hover:border-orange-500/40 transition cursor-pointer group"
+                onclick="window.location.href='{{ route('user.events.show', $event) }}'">
 
                 {{-- Top row: name + badges + actions --}}
                 <div class="flex items-start justify-between mb-4">
                     <div class="flex items-center gap-2 flex-wrap">
-                        <h3 class="text-base font-medium text-white">{{ ucwords(str_replace('_', ' ', $event->name)) }}</h3>
+                        <h3 class="text-base font-medium text-white group-hover:text-orange-400 transition">{{ ucwords(str_replace('_', ' ', $event->name)) }}</h3>
 
                         @if($event->approval_status === 'pending')
                         <span class="bg-yellow-500/12 text-yellow-500 text-xs px-2.5 py-0.5 rounded-full font-medium">Pending</span>
@@ -56,11 +57,11 @@
                         @endif
                     </div>
 
-                    <div class="flex items-center gap-4 flex-shrink-0 ml-4">
+                    <div class="flex items-center gap-2 flex-shrink-0 ml-4" onclick="event.stopPropagation()">
                         @if($event->approval_status === 'approved')
-                        <a href="{{ route('user.events.show', $event) }}"
-                            class="text-orange-500 hover:text-orange-400 text-sm font-medium transition whitespace-nowrap">
-                            Manage →
+                        <a href="{{ route('user.events.matches.create', $event) }}"
+                            class="bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium px-3 py-1.5 rounded transition whitespace-nowrap">
+                            + Add Match
                         </a>
                         @endif
                         <a href="{{ route('user.events.edit', $event) }}"

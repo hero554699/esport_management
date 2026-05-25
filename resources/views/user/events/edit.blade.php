@@ -107,20 +107,49 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20A10 10 0 0012 2z" />
                     </svg>
                     <p class="text-blue-300 text-xs leading-relaxed">
-                        <strong class="text-blue-400">Certification required</strong> — National, International, and World tournaments need a valid certification document.
+                        <strong class="text-blue-400">Certification required</strong> — National, International, and World tournaments need a valid certification document to ensure legitimacy.
                     </p>
                 </div>
 
                 {{-- Already uploaded --}}
                 @if($event->hasCertification())
-                <div class="bg-green-500/8 border border-green-500/25 rounded-lg px-4 py-3 flex gap-3 items-start">
-                    <svg class="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                    </svg>
-                    <div>
-                        <p class="text-green-400 text-xs font-medium">Certification uploaded</p>
-                        <p class="text-green-300 text-xs mt-0.5 break-all">{{ basename($event->certification_path) }}</p>
+                <div class="bg-green-500/8 border border-green-500/25 rounded-lg px-4 py-4 flex flex-col gap-3">
+                    <div class="flex gap-3 items-start">
+                        <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        <div class="flex-1">
+                            <p class="text-green-400 text-sm font-medium">Certification uploaded</p>
+                            <p class="text-green-300 text-xs mt-1 break-all">{{ basename($event->certification_path) }}</p>
+                        </div>
                     </div>
+
+                    {{-- Image Preview --}}
+                    @if(in_array(strtolower(pathinfo($event->certification_path, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                    <div class="mt-2 p-2 bg-gray-900 rounded-lg">
+                        <img src="{{ asset('storage/' . $event->certification_path) }}"
+                            alt="Certification"
+                            class="max-h-48 w-auto mx-auto rounded border border-green-500/30">
+                    </div>
+                    @endif
+
+                    {{-- Action Links --}}
+                    <div class="flex gap-2 pt-2 border-t border-green-500/20">
+                        <a href="{{ asset('storage/' . $event->certification_path) }}"
+                            target="_blank"
+                            class="flex-1 text-center text-green-300 hover:text-green-200 hover:bg-green-500/10 py-2 rounded text-xs font-medium transition">
+                            👁 View
+                        </a>
+                        <a href="{{ asset('storage/' . $event->certification_path) }}"
+                            download="{{ basename($event->certification_path) }}"
+                            class="flex-1 text-center text-green-300 hover:text-green-200 hover:bg-green-500/10 py-2 rounded text-xs font-medium transition">
+                            ⬇ Download
+                        </a>
+                    </div>
+
+                    @if($event->is_certification_public)
+                    <p class="text-green-300 text-xs font-medium text-center">✓ Public - visible on tournament page</p>
+                    @endif
                 </div>
                 @endif
 
@@ -226,11 +255,7 @@
 
         if (['national', 'international', 'world'].includes(type)) {
             certSection.classList.remove('hidden');
-            certInput.required = {
-                {
-                    $event - > hasCertification() ? 'false' : 'true'
-                }
-            };
+            certInput.required = true;
         } else {
             certSection.classList.add('hidden');
             certInput.required = false;
