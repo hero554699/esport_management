@@ -56,9 +56,11 @@ RUN mkdir -p storage/framework/cache storage/framework/sessions \
     && chmod -R 775 storage bootstrap/cache public/uploads
 
 # Entrypoint script handles runtime tasks
-COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+COPY entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 EXPOSE 10000
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 CMD ["docker-entrypoint.sh"]
